@@ -365,8 +365,7 @@ function addCardToCarousel(categoryId, card, prepend = false) {
       .replace(/^v\d+\//, '')   // quita versión tipo v1234567/
       .replace(/\.[^/.]+$/, ''); // quita extensión .mp4 .mov etc
 
-    const thumbUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/video/upload/w_400,h_240,c_fill,so_2/${videoPublicId}.jpg`;
-
+    const thumbUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/video/upload/w_400,h_240,c_fill,so_3,dl_200,e_loop/${videoPublicId}.gif`;
     thumbHTML = `<div style="position:relative;width:100%;height:120px;overflow:hidden;border-radius:4px 4px 0 0;">
                    <img src="${thumbUrl}" alt="${card.title}"
                         style="width:100%;height:120px;object-fit:cover;display:block;"
