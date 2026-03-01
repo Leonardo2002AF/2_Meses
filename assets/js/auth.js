@@ -80,51 +80,184 @@ function hideLoginScreen() {
 function applySession(session) {
   const isGuest = session?.guest === true;
 
-  // Botón de subida — solo si está logueado y NO es invitado
+  // Botón de subida
   const uploadBtn = document.querySelector('[onclick="openUploadModal()"]');
   if (uploadBtn) {
     uploadBtn.style.display = (!session || isGuest) ? 'none' : '';
   }
 
-  // Ocultar botón "Ver Todo" del banner si es invitado
-  const bannerBtns = document.querySelectorAll('.memory-banner-actions .btn');
-  bannerBtns.forEach(btn => {
-    if (btn.textContent.includes('Ver Todo')) {
-      // este sí puede verlo
-    }
-  });
-
-  // Avatar en navbar
-  const avatar = document.querySelector('.nav-avatar');
-  if (avatar) {
-    if (session && !isGuest) {
-      avatar.textContent  = session.emoji;
-      avatar.title        = session.username;
-      avatar.style.cursor = 'pointer';
-      avatar.onclick = () => {
-        const action = confirm(
-          `👤 ${session.username}\n\n¿Qué deseas hacer?\n\nAcepta = Cerrar sesión\nCancela = Cambiar contraseña`
-        );
-        if (action) logout();
-        else openChangePasswordModal();
-      };
-    } else if (isGuest) {
-      avatar.textContent  = '👀';
-      avatar.title        = 'Modo invitado';
-      avatar.style.cursor = 'pointer';
-      avatar.onclick = () => {
-        if (confirm('¿Deseas iniciar sesión con tu cuenta?')) {
-          clearSession();
-          showLoginScreen();
-        }
-      };
-    } else {
-      avatar.textContent  = '💑';
-      avatar.title        = 'Iniciar sesión';
-      avatar.style.cursor = 'pointer';
-      avatar.onclick      = () => showLoginScreen();
-    }
+  // Banner álbum
+  const memoryBanner = document.querySelector('.memory-banner');
+  if (memoryBanner) {
+    memoryBanner.style.display = (!session || isGuest) ? 'none' : '';
   }
+
+  // Avatar
+  const avatar = document.querySelector('.nav-avatar');
+  if (!avatar) return;
+
+  if (session && !isGuest) {
+    avatar.textContent  = session.emoji;
+    avatar.title        = session.username;
+    avatar.style.cursor = 'pointer';
+    avatar.onclick      = (e) => { e.stopPropagation(); toggleAvatarMenu('user', session); };
+  } else if (isGuest) {
+    avatar.textContent  = '👀';
+    avatar.title        = 'Modo invitado';
+    avatar.style.cursor = 'pointer';
+    avatar.onclick      = (e) => { e.stopPropagation(); toggleAvatarMenu('guest', session); };
+  } else {
+    avatar.textContent  = '💑';
+    avatar.title        = 'Iniciar sesión';
+    avatar.style.cursor = 'pointer';
+    avatar.onclick      = () => showLoginScreen();
+  }
+}
+
+/* ════════════════════
+   MENÚ DROPDOWN AVATAR
+════════════════════ */
+function toggleAvatarMenu(type, session) {
+  // Eliminar menú existente si ya hay uno
+  const existing = document.getElementById('avatar-menu');
+  if (existing) { existing.remove(); return; }
+
+  const avatar = document.querySelector('.nav-avatar');
+  const rect   = avatar.getBoundingClientRect();
+
+  const menu = document.createElement('div');
+  menu.id = 'avatar-menu';
+  menu.style.cssText = `
+    position: fixed;
+    top: ${rect.bottom + 8}px;
+    right: ${window.innerWidth - rect.right}px;
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 0.5rem;
+    min-width: 200px;
+    z-index: 9000;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04);
+    animation: menuIn 0.18s cubic-bezier(0.22,1,0.36,1);
+  `;
+
+  if (type === 'user') {
+    menu.innerHTML = `
+      <style>
+        @keyframes menuIn {
+          from { transform: translateY(-8px) scale(0.96); opacity: 0; }
+          to   { transform: translateY(0)    scale(1);    opacity: 1; }
+        }
+        .av-menu-header {
+          padding: 0.6rem 0.8rem 0.8rem;
+          border-bottom: 1px solid #222;
+          margin-bottom: 0.4rem;
+        }
+        .av-menu-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 1rem;
+          color: white;
+        }
+        .av-menu-role {
+          font-size: 0.72rem;
+          color: #e50914;
+          font-family: 'Lato', sans-serif;
+          letter-spacing: 0.5px;
+        }
+        .av-menu-item {
+          display: flex;
+          align-items: center;
+          gap: 0.7rem;
+          padding: 0.6rem 0.8rem;
+          border-radius: 7px;
+          cursor: pointer;
+          font-family: 'Lato', sans-serif;
+          font-size: 0.88rem;
+          color: #ccc;
+          transition: background 0.15s, color 0.15s;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+        }
+        .av-menu-item:hover { background: #222; color: white; }
+        .av-menu-item.danger:hover { background: rgba(229,9,20,0.1); color: #e50914; }
+        .av-menu-divider { height: 1px; background: #222; margin: 0.3rem 0; }
+      </style>
+      <div class="av-menu-header">
+        <div class="av-menu-name">${session.emoji} ${session.username}</div>
+        <div class="av-menu-role">✦ Miembro</div>
+      </div>
+      <button class="av-menu-item" onclick="closeAvatarMenu();openChangePasswordModal()">
+        🔑 Cambiar contraseña
+      </button>
+      <div class="av-menu-divider"></div>
+      <button class="av-menu-item danger" onclick="closeAvatarMenu();logout()">
+        🚪 Cerrar sesión
+      </button>
+    `;
+  } else {
+    menu.innerHTML = `
+      <style>
+        @keyframes menuIn {
+          from { transform: translateY(-8px) scale(0.96); opacity: 0; }
+          to   { transform: translateY(0)    scale(1);    opacity: 1; }
+        }
+        .av-menu-header {
+          padding: 0.6rem 0.8rem 0.8rem;
+          border-bottom: 1px solid #222;
+          margin-bottom: 0.4rem;
+        }
+        .av-menu-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 1rem;
+          color: white;
+        }
+        .av-menu-role {
+          font-size: 0.72rem;
+          color: #666;
+          font-family: 'Lato', sans-serif;
+        }
+        .av-menu-item {
+          display: flex;
+          align-items: center;
+          gap: 0.7rem;
+          padding: 0.6rem 0.8rem;
+          border-radius: 7px;
+          cursor: pointer;
+          font-family: 'Lato', sans-serif;
+          font-size: 0.88rem;
+          color: #ccc;
+          transition: background 0.15s, color 0.15s;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+        }
+        .av-menu-item:hover { background: #222; color: white; }
+        .av-menu-divider { height: 1px; background: #222; margin: 0.3rem 0; }
+      </style>
+      <div class="av-menu-header">
+        <div class="av-menu-name">👀 Invitado</div>
+        <div class="av-menu-role">Solo lectura</div>
+      </div>
+      <button class="av-menu-item" onclick="closeAvatarMenu();clearSession();showLoginScreen()">
+        🔐 Iniciar sesión
+      </button>
+    `;
+  }
+
+  document.body.appendChild(menu);
+
+  // Cerrar al hacer clic fuera
+  setTimeout(() => {
+    document.addEventListener('click', closeAvatarMenu, { once: true });
+  }, 50);
+}
+
+function closeAvatarMenu() {
+  const menu = document.getElementById('avatar-menu');
+  if (menu) menu.remove();
 }
 
 function enterGuestMode() {
