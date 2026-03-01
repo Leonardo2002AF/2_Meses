@@ -40,7 +40,7 @@ function closeUploadModal() {
 
 function resetUploadModal() {
   uploadState = { file: null, type: null, preview: null, category: UPLOAD_CATEGORIES[0].id };
-  
+
   const dropzone = document.getElementById('um-dropzone');
   if (dropzone) {
     dropzone.innerHTML = `
@@ -53,7 +53,7 @@ function resetUploadModal() {
     `;
   }
 
-  // Input FIJO fuera del dropzone para que no se destruya
+  // Input FIJO fuera del dropzone para que no se destruya en iOS
   let input = document.getElementById('um-file-input-fixed');
   if (!input) {
     input = document.createElement('input');
@@ -64,7 +64,6 @@ function resetUploadModal() {
     input.addEventListener('change', onFileSelected);
     document.body.appendChild(input);
   } else {
-    // Resetear el input para que iOS permita seleccionar el mismo archivo
     input.value = '';
   }
 
@@ -92,42 +91,38 @@ function setUploadStep(step) {
    SELECCIÓN DE ARCHIVO
 ════════════════════ */
 function onFileSelected(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+  const file = e.target.files[0];
+  if (!file) return;
 
-      if (file.size > 100 * 1024 * 1024) {
-        showUploadError('El archivo supera los 100 MB. Elige uno más pequeño.');
-        return;
-      }
+  if (file.size > 100 * 1024 * 1024) {
+    showUploadError('El archivo supera los 100 MB. Elige uno más pequeño.');
+    return;
+  }
 
-      // Fix iOS: HEIC/HEIF no es soportado directamente
-      const isHEIC = file.type === 'image/heic' 
-                  || file.type === 'image/heif'
-                  || file.name.toLowerCase().endsWith('.heic')
-                  || file.name.toLowerCase().endsWith('.heif');
+  const isHEIC = file.type === 'image/heic'
+              || file.type === 'image/heif'
+              || file.name.toLowerCase().endsWith('.heic')
+              || file.name.toLowerCase().endsWith('.heif');
 
-      if (isHEIC) {
-        showUploadError('Formato HEIC no soportado. Ve a Ajustes → Cámara → Formato → selecciona "Más compatible" para usar JPG.');
-        return;
-      }
+  if (isHEIC) {
+    showUploadError('Formato HEIC no soportado. Ve a Ajustes → Cámara → Formato → "Más compatible".');
+    return;
+  }
 
-      uploadState.file = file;
-      uploadState.type = file.type.startsWith('video/') ? 'video' : 'image';
+  uploadState.file = file;
+  uploadState.type = file.type.startsWith('video/') ? 'video' : 'image';
 
-      const reader = new FileReader();
-
-      reader.onload = (ev) => {
-        uploadState.preview = ev.target.result;
-        showPreview(uploadState.type, ev.target.result, file.name);
-        setUploadStep(2);
-      };
-
-      reader.onerror = () => {
-        showUploadError('No se pudo leer el archivo. Intenta con otra foto.');
-      };
-
-      reader.readAsDataURL(file);
-    }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    uploadState.preview = ev.target.result;
+    showPreview(uploadState.type, ev.target.result, file.name);
+    setUploadStep(2);
+  };
+  reader.onerror = () => {
+    showUploadError('No se pudo leer el archivo. Intenta con otra foto.');
+  };
+  reader.readAsDataURL(file);
+}
 
 function showPreview(type, src, name) {
   const dropzone = document.getElementById('um-dropzone');
@@ -149,14 +144,13 @@ function showPreview(type, src, name) {
 function triggerFileInput() {
   const input = document.getElementById('um-file-input-fixed');
   if (input) {
-    input.value = ''; // reset para iOS
+    input.value = '';
     input.click();
   }
 }
+
 /* ════════════════════
    SUBIR A CLOUDINARY
-   ✅ El contexto se manda en la misma
-   petición — no requiere firma
 ════════════════════ */
 async function startUpload() {
   const title    = document.getElementById('um-title').value.trim();
@@ -172,7 +166,6 @@ async function startUpload() {
 
   const gradient = randomGradient();
 
-  // Contexto que viaja junto al archivo (permitido en unsigned)
   const contextStr = [
     `title=${encodeURIComponent(title)}`,
     `sub=${encodeURIComponent(desc || title)}`,
@@ -184,9 +177,11 @@ async function startUpload() {
   ].join('|');
 
   try {
+    // ✅ category se pasa a uploadToCloudinary para el tag compartido
     const url = await uploadToCloudinary(
       uploadState.file,
       contextStr,
+      category,
       (pct) => showProgress(pct)
     );
 
@@ -200,20 +195,13 @@ async function startUpload() {
       video:    uploadState.type === 'video' ? url : '',
     };
 
-    // Guardar también en localStorage como respaldo
     saveToLocalStorage(category, card);
+    addCardToCarousel(category, card);
+    showUploadSuccess(title);
+    setUploadStep(4);
 
-    // Mostrar inmediatamente sin esperar recarga
-      addCardToCarousel(category, card);
-      saveToLocalStorage(category, card);
-      showUploadSuccess(title);
-      setUploadStep(4);
-
-      // Recargar lista desde Cloudinary después de 3 segundos
-      // para sincronizar con otros dispositivos
-      setTimeout(() => {
-        loadSavedCards();
-      }, 3000);
+    // Recargar desde Cloudinary tras 3s para sincronizar otros dispositivos
+    setTimeout(() => loadSavedCards(), 3000);
 
   } catch (err) {
     console.error(err);
@@ -224,20 +212,18 @@ async function startUpload() {
 
 /* ════════════════════
    UPLOAD A CLOUDINARY
-   contexto incluido en FormData
+   ✅ Tag "nuestros-recuerdos" = compartido
+   ✅ Tag "cat_xx" = categoría del carrusel
 ════════════════════ */
-function uploadToCloudinary(file, contextStr, onProgress) {
+function uploadToCloudinary(file, contextStr, category, onProgress) {
   return new Promise((resolve, reject) => {
     const form = new FormData();
     form.append('file',          file);
     form.append('upload_preset', CLOUDINARY_PRESET);
     form.append('folder',        'nuestros-recuerdos');
     form.append('context',       contextStr);
-
-    // Tags como respaldo — codifica los datos clave
-    const params = new URLSearchParams(contextStr.replace(/\|/g, '&'));
-    const tag = `cat_${params.get('category') || 'c1'}`;
-    form.append('tags', tag);
+    // ✅ Tag global para que aparezca en TODOS los dispositivos
+    form.append('tags',          `nuestros-recuerdos,cat_${category || 'c1'}`);
 
     const resourceType = file.type.startsWith('video/') ? 'video' : 'image';
     const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`;
@@ -273,18 +259,19 @@ function saveToLocalStorage(categoryId, card) {
   try {
     const all = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
     if (!all[categoryId]) all[categoryId] = [];
-    // evitar duplicados por título+url
-    const exists = all[categoryId].some(c => c.title === card.title && (c.image === card.image || c.video === card.video));
+    const exists = all[categoryId].some(c =>
+      c.title === card.title && (c.image === card.image || c.video === card.video)
+    );
     if (!exists) all[categoryId].unshift(card);
     localStorage.setItem(LS_KEY, JSON.stringify(all));
-  } catch(e) { /* incógnito sin storage — no pasa nada */ }
+  } catch(e) {}
 }
 
 /* ════════════════════
    CARGAR DESDE CLOUDINARY
-   ✅ Usa el endpoint público de listas
-   Requiere activar "Resource list" en
-   Cloudinary → Settings → Security
+   ✅ Imágenes y videos compartidos
+   ✅ Categoría desde context o tag
+   ✅ Cache busting para ver siempre lo nuevo
 ════════════════════ */
 async function loadSavedCards() {
   let loaded = false;
@@ -300,7 +287,7 @@ async function loadSavedCards() {
     const vidData = vidRes.ok ? await vidRes.json() : { resources: [] };
 
     if (!imgRes.ok && !vidRes.ok) {
-      console.info('Aún no hay recuerdos subidos en Cloudinary — sube el primero.');
+      console.info('Aún no hay recuerdos en Cloudinary.');
       try {
         const all = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
         Object.entries(all).forEach(([catId, cards]) => {
@@ -319,13 +306,13 @@ async function loadSavedCards() {
       all.forEach(r => {
         const ctx = r.context?.custom || {};
 
-        // ✅ Recuperar categoría desde tags si el context está vacío
+        // ✅ Categoría desde context, si no desde tag cat_xx
         const tagCat   = (r.tags || []).find(t => t.startsWith('cat_'));
         const category = ctx.category || (tagCat ? tagCat.replace('cat_', '') : 'c1');
         const type     = ctx.type || r.resourceType || 'image';
 
         const card = {
-          // ✅ Si no hay título en context usa el nombre del archivo
+          // ✅ Título desde context, si no usa nombre del archivo
           title:    decodeURIComponent(ctx.title    || r.display_name || r.public_id.split('/').pop() || 'Recuerdo'),
           sub:      decodeURIComponent(ctx.sub      || ''),
           desc:     decodeURIComponent(ctx.desc     || ''),
@@ -340,6 +327,7 @@ async function loadSavedCards() {
       });
       loaded = true;
     }
+
   } catch (err) {
     console.warn('Cloudinary list no disponible:', err);
   }
