@@ -14,8 +14,8 @@ function saveDate(dateStr) {
 }
 
 function calcDiff(dateStr) {
-  const start = new Date(dateStr + 'T00:00:00');
-  const now   = new Date();
+  const start  = new Date(dateStr + 'T00:00:00');
+  const now    = new Date();
   const diffMs = now - start;
   if (diffMs < 0) return { years: 0, months: 0, days: 0, total: 0 };
 
@@ -35,9 +35,9 @@ function pad(n) { return String(n).padStart(2, '0'); }
 function updateCounter() {
   const dateStr = getSavedDate();
   const el      = document.getElementById('counter-section');
+  if (!el) return;
 
   if (!dateStr) {
-    // Sin fecha configurada: mostrar CTA
     el.innerHTML = `
       <div class="counter-left">
         <div class="counter-label">💞 Nuestro Contador</div>
@@ -51,10 +51,10 @@ function updateCounter() {
     return;
   }
 
-  const d      = calcDiff(dateStr);
-  const date   = new Date(dateStr + 'T00:00:00');
-  const opts   = { day: 'numeric', month: 'long', year: 'numeric' };
-  const since  = date.toLocaleDateString('es-ES', opts);
+  const d    = calcDiff(dateStr);
+  const date = new Date(dateStr + 'T00:00:00');
+  const opts = { day: 'numeric', month: 'long', year: 'numeric' };
+  const since = date.toLocaleDateString('es-ES', opts);
 
   el.innerHTML = `
     <div class="counter-left">
@@ -63,15 +63,12 @@ function updateCounter() {
       <div class="counter-subtitle">${d.total.toLocaleString('es-ES')} días de pura felicidad ✨</div>
       <div class="counter-since">
         Desde el <span>${since}</span>
-        <button
-          onclick="openDateModal()"
+        <button onclick="openDateModal()"
           style="background:none;border:none;color:#555;cursor:pointer;font-size:0.75rem;padding:0 4px;transition:color 0.2s"
-          onmouseover="this.style.color='#aaa'"
-          onmouseout="this.style.color='#555'"
+          onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#555'"
           title="Cambiar fecha">✏️</button>
       </div>
     </div>
-
     <div class="counter-digits">
       ${d.years > 0 ? `
       <div class="counter-unit">
@@ -80,13 +77,11 @@ function updateCounter() {
       </div>
       <div class="counter-separator">:</div>
       ` : ''}
-
       <div class="counter-unit">
         <div class="counter-num" id="cnt-months">${pad(d.months)}</div>
         <div class="counter-unit-label">Mes${d.months !== 1 ? 'es' : ''}</div>
       </div>
       <div class="counter-separator">:</div>
-
       <div class="counter-unit">
         <div class="counter-num" id="cnt-days">${pad(d.days)}</div>
         <div class="counter-unit-label">Días</div>
@@ -120,21 +115,19 @@ function saveDateAndClose() {
 /* ─── RENDER HERO ─── */
 function renderHero() {
   const bg = document.querySelector('.hero-bg');
-  if (HERO.image) bg.style.backgroundImage =
+  if (HERO.image && bg) bg.style.backgroundImage =
     `linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.1) 100%),
      linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 50%),
      url('${HERO.image}')`;
 
-  document.querySelector('.hero-badge').textContent          = HERO.badge;
-  document.querySelector('.hero-meta .match').textContent    = HERO.match;
-  document.querySelector('.hero-meta .year').textContent     = HERO.year;
-  document.querySelector('.hero-description').textContent    = HERO.description;
+  document.querySelector('.hero-badge').textContent       = HERO.badge;
+  document.querySelector('.hero-meta .match').textContent = HERO.match;
+  document.querySelector('.hero-meta .year').textContent  = HERO.year;
+  document.querySelector('.hero-description').textContent = HERO.description;
 
-  // Título con parte en cursiva rosa
   const t = HERO.title;
   const e = HERO.titleEm;
-  document.querySelector('.hero-title').innerHTML =
-    t.replace(e, `<em>${e}</em>`);
+  document.querySelector('.hero-title').innerHTML = t.replace(e, `<em>${e}</em>`);
 }
 
 /* ─── RENDER CARRUSELES ─── */
@@ -150,7 +143,8 @@ function renderCarousels() {
       let thumbHTML = '';
       if (m.image) {
         thumbHTML = `<img class="card-thumb-placeholder" src="${m.image}" alt="${m.title}"
-                          style="height:120px;object-fit:cover;" onerror="this.parentElement.innerHTML=buildEmojiThumb('${m.gradient}','${m.emoji}')">`;
+                          style="height:120px;object-fit:cover;"
+                          onerror="this.parentElement.innerHTML=buildEmojiThumb('${m.gradient}','${m.emoji}')">`;
       } else {
         thumbHTML = `<div class="card-thumb-placeholder" style="background:${m.gradient}">
                        <span style="font-size:2.5rem">${m.emoji}</span>
@@ -189,80 +183,219 @@ function renderTop10() {
       <div class="top10-img" style="background:${m.gradient}">${m.emoji}</div>
       <div class="top10-num">${i + 1}</div>
     `;
-    card.onclick = () => openModal({ ...m, sub: `Top ${i+1} de nuestros favoritos`, desc: `Un recuerdo que merece estar en el top 10. Único e irrepetible.` });
+    card.onclick = () => openModal({
+      ...m,
+      sub:  `Top ${i + 1} de nuestros favoritos`,
+      desc: `Un recuerdo que merece estar en el top 10. Único e irrepetible.`,
+    });
     container.appendChild(card);
   });
 }
 
-/* ─── MODAL DE RECUERDO ─── */
+/* ════════════════════
+   MODAL DE RECUERDO
+   ✅ Usa IDs fijos: modal-play-btn / modal-fav-btn
+════════════════════ */
 function openModal(card) {
-  const session = getSession ? getSession() : null;
-  const isGuest = session?.guest === true;
+  const session  = (typeof getSession === 'function') ? getSession() : null;
+  const isGuest  = session?.guest === true;
   const username = session?.username || null;
 
-  // Verificar si ya es favorito
-  const favKey  = username ? `favs_${username}` : null;
-  const favs    = favKey ? JSON.parse(localStorage.getItem(favKey) || '[]') : [];
-  const isFav   = favs.some(f => (f.image || f.video) === (card.image || card.video));
-
-  document.getElementById('modal-hero-bg').style.background =
-    card.image ? `url(${card.image}) center/cover` : card.gradient;
-  document.getElementById('modal-emoji-inner').textContent = card.image ? '' : card.emoji;
-  document.getElementById('modal-title').textContent       = card.title;
-  document.getElementById('modal-desc').textContent        = card.desc || card.sub || '';
-
-  // Área de media
-  const mediaEl = document.getElementById('modal-media');
-  if (card.video) {
-    mediaEl.innerHTML = `
-      <video id="modal-video-player" src="${card.video}"
-             style="width:100%;max-height:280px;border-radius:8px;display:block;"
-             controls playsinline>
-      </video>`;
-  } else if (card.image) {
-    mediaEl.innerHTML = `
-      <img src="${card.image}" alt="${card.title}"
-           style="width:100%;max-height:280px;object-fit:contain;border-radius:8px;display:block;"/>`;
-  } else {
-    mediaEl.innerHTML = `<span>🎬</span><p>Sin contenido multimedia</p>`;
+  // ── Fondo hero ──
+  const heroBg = document.getElementById('modal-hero-bg');
+  if (heroBg) {
+    heroBg.style.background = card.image
+      ? `url(${card.image}) center/cover no-repeat`
+      : (card.gradient || 'linear-gradient(135deg,#4a0015,#c0396e)');
   }
 
-  // Botón reproducir — pantalla completa si hay video
-  const playBtn = document.querySelector('.modal-actions .btn-play');
+  // ── Emoji ──
+  const emojiEl = document.getElementById('modal-emoji-inner');
+  if (emojiEl) emojiEl.textContent = card.image ? '' : (card.emoji || '💫');
+
+  // ── Título ──
+  const titleEl = document.getElementById('modal-title');
+  if (titleEl) titleEl.textContent = card.title || '';
+
+  // ── Descripción ──
+  const descEl = document.getElementById('modal-desc');
+  if (descEl) descEl.textContent = card.desc || card.sub || '';
+
+  // ── Área multimedia ──
+  const mediaEl = document.getElementById('modal-media');
+  if (mediaEl) {
+    if (card.video) {
+      mediaEl.innerHTML = `
+        <video id="modal-video-player"
+               src="${card.video}"
+               style="width:100%;max-height:280px;border-radius:8px;display:block;"
+               controls playsinline preload="metadata">
+        </video>`;
+    } else if (card.image) {
+      mediaEl.innerHTML = `
+        <img src="${card.image}" alt="${card.title || ''}"
+             style="width:100%;max-height:280px;object-fit:contain;border-radius:8px;display:block;"/>`;
+    } else {
+      mediaEl.innerHTML = `
+        <div style="text-align:center;padding:2rem;color:#555;">
+          <span style="font-size:3rem">🎬</span>
+          <p style="font-size:0.85rem;margin-top:0.5rem;">Sin contenido multimedia</p>
+        </div>`;
+    }
+  }
+
+  // ── Botón REPRODUCIR — pantalla completa para videos ──
+  const playBtn = document.getElementById('modal-play-btn');
   if (playBtn) {
     if (card.video) {
       playBtn.style.display = '';
       playBtn.onclick = () => {
         const vid = document.getElementById('modal-video-player');
         if (!vid) return;
-        if (vid.requestFullscreen)            vid.requestFullscreen();
-        else if (vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
-        else if (vid.webkitEnterFullscreen)   vid.webkitEnterFullscreen(); // iOS
         vid.play();
+        if      (vid.requestFullscreen)            vid.requestFullscreen();
+        else if (vid.webkitRequestFullscreen)      vid.webkitRequestFullscreen();
+        else if (vid.webkitEnterFullscreen)        vid.webkitEnterFullscreen();
       };
     } else {
       playBtn.style.display = 'none';
     }
   }
 
-  // Botón ♥ Me Encanta — favoritos (solo usuarios logueados)
-  const favBtn = document.querySelector('.modal-actions .btn-fav');
+  // ── Botón ME ENCANTA — favoritos ──
+  const favBtn = document.getElementById('modal-fav-btn');
   if (favBtn) {
     if (!isGuest && username) {
       favBtn.style.display = '';
-      favBtn.textContent   = isFav ? '💖 En favoritos' : '♥ Me Encanta';
+      const favKey = `favs_${username}`;
+      const favs   = JSON.parse(localStorage.getItem(favKey) || '[]');
+      const isFav  = favs.some(f =>
+        (f.image || f.video) === (card.image || card.video)
+      );
+      favBtn.textContent      = isFav ? '💖 En favoritos' : '♥ Me Encanta';
       favBtn.style.background = isFav ? '#c0396e' : '';
-      favBtn.onclick = () => toggleFavorite(card, favBtn);
+      favBtn.onclick          = () => toggleFavorite(card, favBtn);
     } else {
       favBtn.style.display = 'none';
     }
   }
 
-  document.getElementById('modal').classList.add('active');
+  // ── Abrir modal ──
+  const overlay = document.getElementById('modal');
+  if (overlay) overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
+
 function closeModal() {
-  document.getElementById('modal').classList.remove('open');
+  const overlay = document.getElementById('modal');
+  if (overlay) overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+/* ════════════════════
+   FAVORITOS
+════════════════════ */
+function toggleFavorite(card, btn) {
+  const session = (typeof getSession === 'function') ? getSession() : null;
+  if (!session || session.guest) return;
+
+  const favKey = `favs_${session.username}`;
+  const favs   = JSON.parse(localStorage.getItem(favKey) || '[]');
+  const idx    = favs.findIndex(f =>
+    (f.image || f.video) === (card.image || card.video)
+  );
+
+  if (idx === -1) {
+    favs.push(card);
+    localStorage.setItem(favKey, JSON.stringify(favs));
+    btn.textContent      = '💖 En favoritos';
+    btn.style.background = '#c0396e';
+    spawnHearts(null, 6);
+  } else {
+    favs.splice(idx, 1);
+    localStorage.setItem(favKey, JSON.stringify(favs));
+    btn.textContent      = '♥ Me Encanta';
+    btn.style.background = '';
+  }
+}
+
+function getFavorites() {
+  const session = (typeof getSession === 'function') ? getSession() : null;
+  if (!session || session.guest) return [];
+  const favKey = `favs_${session.username}`;
+  return JSON.parse(localStorage.getItem(favKey) || '[]');
+}
+
+function openFavoritesModal() {
+  const favs  = getFavorites();
+  const grid  = document.getElementById('favs-grid');
+  const empty = document.getElementById('favs-empty');
+  const modal = document.getElementById('favs-modal');
+  if (!grid || !empty || !modal) return;
+
+  grid.innerHTML = '';
+
+  if (favs.length === 0) {
+    grid.style.display  = 'none';
+    empty.style.display = 'block';
+  } else {
+    grid.style.display  = 'grid';
+    empty.style.display = 'none';
+
+    favs.forEach(card => {
+      const el = document.createElement('div');
+      el.style.cssText = `cursor:pointer;border-radius:8px;overflow:hidden;
+        background:#1a1a1a;border:1px solid #222;transition:border-color 0.2s;`;
+      el.onmouseenter = () => el.style.borderColor = '#e50914';
+      el.onmouseleave = () => el.style.borderColor = '#222';
+
+      let thumb = '';
+      if (card.image) {
+        thumb = `<img src="${card.image}"
+                      style="width:100%;height:100px;object-fit:cover;display:block;"/>`;
+      } else if (card.video) {
+        const cloudName   = (typeof CLOUDINARY_CLOUD !== 'undefined') ? CLOUDINARY_CLOUD : '';
+        const afterUpload = card.video.split('/upload/')[1] || '';
+        const pubId       = afterUpload.replace(/^v\d+\//, '').replace(/\.[^/.]+$/, '');
+        const thumbUrl    = `https://res.cloudinary.com/${cloudName}/video/upload/w_300,h_180,c_fill,so_2/${pubId}.jpg`;
+        thumb = `
+          <div style="position:relative;width:100%;height:100px;overflow:hidden;">
+            <img src="${thumbUrl}"
+                 style="width:100%;height:100px;object-fit:cover;display:block;"
+                 onerror="this.parentElement.style.background='${card.gradient}';this.style.display='none'"/>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.85);
+                display:flex;align-items:center;justify-content:center;font-size:0.8rem;">▶</div>
+            </div>
+          </div>`;
+      } else {
+        thumb = `<div style="width:100%;height:100px;background:${card.gradient};
+          display:flex;align-items:center;justify-content:center;font-size:2rem;">${card.emoji}</div>`;
+      }
+
+      el.innerHTML = `
+        ${thumb}
+        <div style="padding:0.5rem 0.6rem;">
+          <div style="font-size:0.78rem;font-weight:700;color:white;font-family:'Lato',sans-serif;
+            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${card.title}</div>
+          <div style="font-size:0.65rem;color:#c0396e;font-family:'Lato',sans-serif;margin-top:2px;">💖 Favorito</div>
+        </div>`;
+
+      el.onclick = () => {
+        closeFavoritesModal();
+        setTimeout(() => openModal(card), 200);
+      };
+      grid.appendChild(el);
+    });
+  }
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFavoritesModal() {
+  const modal = document.getElementById('favs-modal');
+  if (modal) modal.classList.remove('open');
   document.body.style.overflow = '';
 }
 
@@ -275,17 +408,19 @@ function scrollCarousel(id, dir) {
 /* ─── CORAZONES FLOTANTES ─── */
 function spawnHearts(anchor, count = 6) {
   const hearts = ['♥','💖','💗','💕','💓','❤️'];
-  const rect   = anchor ? anchor.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0, height: 0 };
+  const rect   = anchor
+    ? anchor.getBoundingClientRect()
+    : { left: window.innerWidth / 2 - 40, top: window.innerHeight / 2, width: 80, height: 0 };
 
   for (let i = 0; i < count; i++) {
-    const h     = document.createElement('div');
-    h.className = 'floating-heart';
+    const h       = document.createElement('div');
+    h.className   = 'floating-heart';
     h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
     h.style.cssText = `
-      left: ${rect.left + rect.width/2 + (Math.random()-0.5)*80}px;
-      top:  ${rect.top  + rect.height/2}px;
-      font-size: ${0.8 + Math.random()*1}rem;
-      animation-delay: ${i*0.12}s;
+      left: ${rect.left + rect.width / 2 + (Math.random() - 0.5) * 80}px;
+      top:  ${rect.top  + rect.height / 2}px;
+      font-size: ${0.8 + Math.random() * 1}rem;
+      animation-delay: ${i * 0.12}s;
     `;
     document.body.appendChild(h);
     setTimeout(() => h.remove(), 2400);
@@ -303,14 +438,13 @@ function initNavbar() {
   });
 }
 
-/* ─── CERRAR MODALS AL HACER CLIC AFUERA ─── */
+/* ─── CERRAR MODALES AL HACER CLIC AFUERA ─── */
 function initOutsideClose() {
-  document.getElementById('modal').addEventListener('click', e => {
-    if (e.target === document.getElementById('modal')) closeModal();
-  });
-  document.getElementById('date-modal').addEventListener('click', e => {
-    if (e.target === document.getElementById('date-modal')) closeDateModal();
-  });
+  const modal     = document.getElementById('modal');
+  const dateMod   = document.getElementById('date-modal');
+
+  if (modal)   modal.addEventListener('click',   e => { if (e.target === modal)   closeModal(); });
+  if (dateMod) dateMod.addEventListener('click', e => { if (e.target === dateMod) closeDateModal(); });
 }
 
 /* ─── INIT ─── */
@@ -322,94 +456,3 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initOutsideClose();
 });
-function toggleFavorite(card, btn) {
-  const session  = getSession ? getSession() : null;
-  if (!session || session.guest) return;
-
-  const favKey = `favs_${session.username}`;
-  const favs   = JSON.parse(localStorage.getItem(favKey) || '[]');
-  const idx    = favs.findIndex(f => (f.image || f.video) === (card.image || card.video));
-
-  if (idx === -1) {
-    favs.push(card);
-    localStorage.setItem(favKey, JSON.stringify(favs));
-    btn.textContent     = '💖 En favoritos';
-    btn.style.background = '#c0396e';
-    addHeart({ clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
-  } else {
-    favs.splice(idx, 1);
-    localStorage.setItem(favKey, JSON.stringify(favs));
-    btn.textContent      = '♥ Me Encanta';
-    btn.style.background = '';
-  }
-}
-
-function getFavorites() {
-  const session = getSession ? getSession() : null;
-  if (!session || session.guest) return [];
-  const favKey = `favs_${session.username}`;
-  return JSON.parse(localStorage.getItem(favKey) || '[]');
-}
-function openFavoritesModal() {
-  const favs  = getFavorites();
-  const grid  = document.getElementById('favs-grid');
-  const empty = document.getElementById('favs-empty');
-  const modal = document.getElementById('favs-modal');
-
-  grid.innerHTML = '';
-
-  if (favs.length === 0) {
-    grid.style.display   = 'none';
-    empty.style.display  = 'block';
-  } else {
-    grid.style.display   = 'grid';
-    empty.style.display  = 'none';
-
-    favs.forEach(card => {
-      const el = document.createElement('div');
-      el.style.cssText = `cursor:pointer;border-radius:8px;overflow:hidden;
-        background:#1a1a1a;border:1px solid #222;transition:border-color 0.2s;`;
-      el.onmouseenter = () => el.style.borderColor = '#e50914';
-      el.onmouseleave = () => el.style.borderColor = '#222';
-
-      let thumb = '';
-      if (card.image) {
-        thumb = `<img src="${card.image}" style="width:100%;height:100px;object-fit:cover;display:block;"/>`;
-      } else if (card.video) {
-        const afterUpload   = card.video.split('/upload/')[1] || '';
-        const videoPublicId = afterUpload.replace(/^v\d+\//, '').replace(/\.[^/.]+$/, '');
-        const thumbUrl      = `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/video/upload/w_300,h_180,c_fill,so_2/${videoPublicId}.jpg`;
-        thumb = `<div style="position:relative;width:100%;height:100px;overflow:hidden;">
-                   <img src="${thumbUrl}" style="width:100%;height:100px;object-fit:cover;display:block;"
-                        onerror="this.parentElement.style.background='${card.gradient}';this.style.display='none'"/>
-                   <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                     <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.85);
-                       display:flex;align-items:center;justify-content:center;font-size:0.8rem;">▶</div>
-                   </div>
-                 </div>`;
-      } else {
-        thumb = `<div style="width:100%;height:100px;background:${card.gradient};
-          display:flex;align-items:center;justify-content:center;font-size:2rem;">${card.emoji}</div>`;
-      }
-
-      el.innerHTML = `
-        ${thumb}
-        <div style="padding:0.5rem 0.6rem;">
-          <div style="font-size:0.78rem;font-weight:700;color:white;font-family:'Lato',sans-serif;
-            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${card.title}</div>
-          <div style="font-size:0.65rem;color:#666;font-family:'Lato',sans-serif;margin-top:2px;">💖 Favorito</div>
-        </div>`;
-
-      el.onclick = () => { closeFavoritesModal(); openModal(card); };
-      grid.appendChild(el);
-    });
-  }
-
-  modal.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-
-function closeFavoritesModal() {
-  document.getElementById('favs-modal').style.display = 'none';
-  document.body.style.overflow = '';
-}

@@ -14,56 +14,59 @@
   <script>eruda.init();</script>
 </head>
 <body>
-    <div id="login-overlay">
-  <div class="login-bg"></div>
-  <div class="login-particles" id="login-particles"></div>
-  <div class="login-box">
-    <div class="login-logo">
-      <span class="login-logo-hearts">💖</span>
-      <div class="login-logo-text">Nuestros<span>♥</span>Recuerdos</div>
-    </div>
-    <h2 class="login-title">Bienvenido/a</h2>
-    <p class="login-subtitle">Solo para los dos 🌹</p>
-    <div id="login-error"></div>
-    <div class="login-field">
-      <label class="login-label" for="login-input-user">Usuario</label>
-      <input class="login-input" id="login-input-user" type="text"
-             placeholder="KerllyV o LeonardoJ" autocomplete="username"/>
-    </div>
-    <div class="login-field">
-      <label class="login-label" for="login-input-pass">Contraseña</label>
-      <input class="login-input" id="login-input-pass" type="password"
-             placeholder="••••••••" autocomplete="current-password"/>
-    </div>
-    <button id="login-submit-btn" onclick="handleLoginSubmit()">Entrar</button>
 
-        <button onclick="enterGuestMode()" style="
-          width:100%; background:transparent; color:#666;
-          border:1px solid #2a2a2a; border-radius:8px;
-          font-family:'Lato',sans-serif; font-size:0.88rem;
-          padding:0.75rem; cursor:pointer; margin-top:0.6rem;
-          transition:border-color 0.2s, color 0.2s;
-          letter-spacing:0.3px;"
-          onmouseover="this.style.borderColor='#555';this.style.color='#aaa'"
-          onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#666'">
-          👀 Entrar como invitado
-        </button>
-    <div class="login-hint">
-      <div class="login-hint-user" onclick="document.getElementById('login-input-user').value='KerllyV';document.getElementById('login-input-user').focus()">
-        <span>🌸</span><span>KerllyV</span>
+  <!-- ══════════════════════════════════
+       LOGIN OVERLAY
+  ═══════════════════════════════════ -->
+  <div id="login-overlay">
+    <div class="login-bg"></div>
+    <div class="login-particles" id="login-particles"></div>
+    <div class="login-box">
+      <div class="login-logo">
+        <span class="login-logo-hearts">💖</span>
+        <div class="login-logo-text">Nuestros<span>♥</span>Recuerdos</div>
       </div>
-      <div class="login-hint-user" onclick="document.getElementById('login-input-user').value='LeonardoJ';document.getElementById('login-input-user').focus()">
-        <span>💙</span><span>LeonardoJ</span>
+      <h2 class="login-title">Bienvenido/a</h2>
+      <p class="login-subtitle">Solo para los dos 🌹</p>
+      <div id="login-error"></div>
+      <div class="login-field">
+        <label class="login-label" for="login-input-user">Usuario</label>
+        <input class="login-input" id="login-input-user" type="text"
+               placeholder="KerllyV o LeonardoJ" autocomplete="username"/>
+      </div>
+      <div class="login-field">
+        <label class="login-label" for="login-input-pass">Contraseña</label>
+        <input class="login-input" id="login-input-pass" type="password"
+               placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button id="login-submit-btn" onclick="handleLoginSubmit()">Entrar</button>
+      <button onclick="enterGuestMode()" style="
+        width:100%; background:transparent; color:#666;
+        border:1px solid #2a2a2a; border-radius:8px;
+        font-family:'Lato',sans-serif; font-size:0.88rem;
+        padding:0.75rem; cursor:pointer; margin-top:0.6rem;
+        transition:border-color 0.2s, color 0.2s; letter-spacing:0.3px;"
+        onmouseover="this.style.borderColor='#555';this.style.color='#aaa'"
+        onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#666'">
+        👀 Entrar como invitado
+      </button>
+      <div class="login-hint">
+        <div class="login-hint-user" onclick="document.getElementById('login-input-user').value='KerllyV';document.getElementById('login-input-user').focus()">
+          <span>🌸</span><span>KerllyV</span>
+        </div>
+        <div class="login-hint-user" onclick="document.getElementById('login-input-user').value='LeonardoJ';document.getElementById('login-input-user').focus()">
+          <span>💙</span><span>LeonardoJ</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+
   <!-- ══════════════════════════════════
        NAVBAR
   ═══════════════════════════════════ -->
   <nav id="navbar">
     <a class="nav-logo" href="#">Nuestros<span>♥</span>Recuerdos</a>
-
     <ul class="nav-links">
       <li><a href="#">Inicio</a></li>
       <li><a href="#c1">Recientes</a></li>
@@ -71,7 +74,6 @@
       <li><a href="#c5">Fechas Especiales</a></li>
       <li><a href="#c6">En Casa</a></li>
     </ul>
-
     <div class="nav-right">
       <span class="nav-icon" title="Buscar">🔍</span>
       <span class="nav-icon" title="Notificaciones">🔔</span>
@@ -117,9 +119,7 @@
   <!-- ══════════════════════════════════
        CONTADOR DE DÍAS JUNTOS
   ═══════════════════════════════════ -->
-  <div class="counter-section" id="counter-section">
-    <!-- Contenido generado por JS (app.js → updateCounter) -->
-  </div>
+  <div class="counter-section" id="counter-section"></div>
 
 
   <!-- ══════════════════════════════════
@@ -128,10 +128,8 @@
   <div class="memory-banner">
     <div class="memory-banner-text">
       <h3>Nuestro <span>Álbum de Amor</span></h3>
-      <p>
-        Sube fotos y videos directamente desde tu celular o computadora.
-        Cada recuerdo que agregues aparecerá al instante en la página.
-      </p>
+      <p>Sube fotos y videos directamente desde tu celular o computadora.
+         Cada recuerdo que agregues aparecerá al instante en la página.</p>
     </div>
     <div class="memory-banner-actions">
       <button class="btn btn-red" onclick="openUploadModal()">＋ Agregar Recuerdo</button>
@@ -141,7 +139,7 @@
 
 
   <!-- ══════════════════════════════════
-       SECCIÓN: SEGUIR VIENDO
+       SECCIONES / CARRUSELES
   ═══════════════════════════════════ -->
   <section class="section">
     <div class="section-header">
@@ -149,32 +147,24 @@
       <a class="section-explore" href="#">Ver todo</a>
     </div>
     <div class="carousel-wrapper">
-      <button class="carousel-arrow"      onclick="scrollCarousel('c1',-1)">❮</button>
+      <button class="carousel-arrow"       onclick="scrollCarousel('c1',-1)">❮</button>
       <div class="carousel" id="c1"></div>
       <button class="carousel-arrow right" onclick="scrollCarousel('c1', 1)">❯</button>
     </div>
   </section>
 
-
-  <!-- ══════════════════════════════════
-       SECCIÓN: MOMENTOS DESTACADOS
-  ═══════════════════════════════════ -->
   <section class="section">
     <div class="section-header">
       <h2 class="section-title"><span class="icon">⭐</span> Momentos Destacados</h2>
       <a class="section-explore" href="#">Ver todo</a>
     </div>
     <div class="carousel-wrapper">
-      <button class="carousel-arrow"      onclick="scrollCarousel('c2',-1)">❮</button>
+      <button class="carousel-arrow"       onclick="scrollCarousel('c2',-1)">❮</button>
       <div class="carousel" id="c2"></div>
       <button class="carousel-arrow right" onclick="scrollCarousel('c2', 1)">❯</button>
     </div>
   </section>
 
-
-  <!-- ══════════════════════════════════
-       SECCIÓN: TOP 10
-  ═══════════════════════════════════ -->
   <section class="section">
     <div class="section-header">
       <h2 class="section-title">🔟 Top 10 Favoritos</h2>
@@ -182,53 +172,41 @@
     <div class="carousel-wrapper">
       <button class="carousel-arrow"       onclick="scrollCarousel('c3',-1)">❮</button>
       <div class="carousel" id="c3" style="gap:16px; padding:1rem 4%;"></div>
-      <button class="carousel-arrow right"  onclick="scrollCarousel('c3', 1)">❯</button>
+      <button class="carousel-arrow right" onclick="scrollCarousel('c3', 1)">❯</button>
     </div>
   </section>
 
-
-  <!-- ══════════════════════════════════
-       SECCIÓN: VIAJES JUNTOS
-  ═══════════════════════════════════ -->
   <section class="section">
     <div class="section-header">
       <h2 class="section-title"><span class="icon">✈</span> Viajes Juntos</h2>
       <a class="section-explore" href="#">Ver todo</a>
     </div>
     <div class="carousel-wrapper">
-      <button class="carousel-arrow"      onclick="scrollCarousel('c4',-1)">❮</button>
+      <button class="carousel-arrow"       onclick="scrollCarousel('c4',-1)">❮</button>
       <div class="carousel" id="c4"></div>
       <button class="carousel-arrow right" onclick="scrollCarousel('c4', 1)">❯</button>
     </div>
   </section>
 
-
-  <!-- ══════════════════════════════════
-       SECCIÓN: FECHAS ESPECIALES
-  ═══════════════════════════════════ -->
   <section class="section">
     <div class="section-header">
       <h2 class="section-title"><span class="icon">🎂</span> Fechas Especiales</h2>
       <a class="section-explore" href="#">Ver todo</a>
     </div>
     <div class="carousel-wrapper">
-      <button class="carousel-arrow"      onclick="scrollCarousel('c5',-1)">❮</button>
+      <button class="carousel-arrow"       onclick="scrollCarousel('c5',-1)">❮</button>
       <div class="carousel" id="c5"></div>
       <button class="carousel-arrow right" onclick="scrollCarousel('c5', 1)">❯</button>
     </div>
   </section>
 
-
-  <!-- ══════════════════════════════════
-       SECCIÓN: MOMENTOS EN CASA
-  ═══════════════════════════════════ -->
   <section class="section">
     <div class="section-header">
       <h2 class="section-title"><span class="icon">🏠</span> Momentos en Casa</h2>
       <a class="section-explore" href="#">Ver todo</a>
     </div>
     <div class="carousel-wrapper">
-      <button class="carousel-arrow"      onclick="scrollCarousel('c6',-1)">❮</button>
+      <button class="carousel-arrow"       onclick="scrollCarousel('c6',-1)">❮</button>
       <div class="carousel" id="c6"></div>
       <button class="carousel-arrow right" onclick="scrollCarousel('c6', 1)">❯</button>
     </div>
@@ -241,7 +219,7 @@
   <footer>
     <span class="footer-logo">Nuestros♥Recuerdos</span>
     <p>Hecho con <span class="footer-heart">♥</span> para ti · Cada momento contigo vale para siempre</p>
-    <p style="margin-top:0.5rem; color:#333;">© 2024 — Solo para los dos</p>
+    <p style="margin-top:0.5rem; color:#333;">© 2025 — Solo para los dos</p>
   </footer>
 
 
@@ -259,20 +237,19 @@
         <h2 class="modal-title" id="modal-title">Título</h2>
         <div class="modal-meta">
           <span style="color:#46d369;font-weight:700;">💖 99% Amor</span>
-          <span style="color:#aaa">2024</span>
+          <span style="color:#aaa">2025</span>
           <span style="color:var(--pink)">♥♥♥♥♥</span>
         </div>
         <div class="modal-video-area" id="modal-media">
           <span>🎬</span>
           <p>Agrega aquí tu video o foto del recuerdo</p>
-          <small>assets/videos/ · assets/images/cards/</small>
         </div>
         <p class="modal-description" id="modal-desc"></p>
         <div class="modal-actions">
-        <button class="btn btn-play">▶ Reproducir</button>
-        <button class="btn btn-red btn-fav" onclick="">♥ Me Encanta</button>
-        <button class="btn btn-info" onclick="closeModal()">✕ Cerrar</button>
-      </div>
+          <button class="btn btn-play" id="modal-play-btn">▶ Reproducir</button>
+          <button class="btn btn-red  btn-fav" id="modal-fav-btn">♥ Me Encanta</button>
+          <button class="btn btn-info" onclick="closeModal()">✕ Cerrar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -299,14 +276,10 @@
   ═══════════════════════════════════ -->
   <div id="upload-modal" onclick="if(event.target===this)closeUploadModal()">
     <div class="um-box">
-
-      <!-- Header -->
       <div class="um-header">
         <h3>📸 Nuevo Recuerdo</h3>
         <button class="um-close" onclick="closeUploadModal()">✕</button>
       </div>
-
-      <!-- Indicador de pasos -->
       <div class="um-steps">
         <div class="um-step-dot active"></div>
         <div class="um-step-line"></div>
@@ -316,64 +289,45 @@
         <div class="um-step-line"></div>
         <div class="um-step-dot"></div>
       </div>
-
       <div class="um-body">
-
-        <!-- Error -->
         <div id="um-error"></div>
-
-        <!-- PASO 1: Elegir archivo -->
         <div class="um-step um-step-active">
-          <div class="um-dropzone" id="um-dropzone"
-               onclick="document.getElementById('um-file-input') && document.getElementById('um-file-input').click()">
+          <div class="um-dropzone" id="um-dropzone">
             <div class="um-drop-icon">📁</div>
             <p class="um-drop-label">Toca para elegir una foto o video</p>
             <p class="um-drop-sub">JPG, PNG, MP4, MOV · Máx. 100 MB</p>
-            <input type="file" id="um-file-input" accept="image/*,video/*" capture="environment"
-                   style="display:none" onchange="onFileSelected(event)"/>
-            <button class="btn btn-outline um-choose-btn"
-                    onclick="event.stopPropagation();document.getElementById('um-file-input').click()">
+            <button class="btn btn-outline um-choose-btn" onclick="triggerFileInput()">
               📷 Elegir archivo
             </button>
           </div>
           <div class="um-nav">
-            <button class="btn btn-info"  onclick="closeUploadModal()">Cancelar</button>
-            <button class="btn btn-red"   onclick="if(uploadState.file){setUploadStep(2)}else{showUploadError('Primero elige un archivo.')}">Siguiente →</button>
+            <button class="btn btn-info" onclick="closeUploadModal()">Cancelar</button>
+            <button class="btn btn-red"  onclick="if(uploadState.file){setUploadStep(2)}else{showUploadError('Primero elige un archivo.')}">Siguiente →</button>
           </div>
         </div>
-
-        <!-- PASO 2: Detalles del recuerdo -->
         <div class="um-step">
           <div class="um-field">
             <label class="um-label" for="um-title">Título del recuerdo *</label>
-            <input class="um-input" id="um-title" type="text"
-                   placeholder="Ej: Primera cita en el parque" maxlength="60"/>
+            <input class="um-input" id="um-title" type="text" placeholder="Ej: Primera cita en el parque" maxlength="60"/>
           </div>
           <div class="um-field">
             <label class="um-label" for="um-desc">Descripción</label>
-            <textarea class="um-textarea" id="um-desc"
-                      placeholder="Cuenta algo sobre este momento especial..."></textarea>
+            <textarea class="um-textarea" id="um-desc" placeholder="Cuenta algo sobre este momento especial..."></textarea>
           </div>
           <div class="um-field">
             <label class="um-label">Emoji representativo</label>
             <input type="hidden" id="um-emoji" value="📸"/>
-            <div class="um-emoji-row" id="um-emoji-row">
-              <!-- generado por JS -->
-            </div>
+            <div class="um-emoji-row" id="um-emoji-row"></div>
           </div>
           <div class="um-field">
             <label class="um-label" for="um-category">Sección</label>
-            <select class="um-select" id="um-category">
-              <!-- generado por JS -->
-            </select>
+            <select class="um-select" id="um-category"></select>
           </div>
           <div class="um-nav">
             <button class="btn btn-info" onclick="setUploadStep(1)">← Atrás</button>
             <button class="btn btn-red"  onclick="startUpload()">♥ Subir</button>
           </div>
         </div>
-
-        <!-- PASO 3: Progreso -->
         <div class="um-step">
           <div class="um-progress-wrap">
             <span class="um-progress-icon">⏳</span>
@@ -384,8 +338,6 @@
             <p id="um-progress-label">Preparando...</p>
           </div>
         </div>
-
-        <!-- PASO 4: Éxito -->
         <div class="um-step">
           <div class="um-success-wrap">
             <span class="um-success-icon">💖</span>
@@ -397,7 +349,74 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
 
+
+  <!-- ══════════════════════════════════
+       MODAL: CAMBIAR CONTRASEÑA
+  ═══════════════════════════════════ -->
+  <div id="change-pass-modal" style="display:none;position:fixed;inset:0;z-index:5000;
+    background:rgba(0,0,0,0.85);align-items:center;justify-content:center;padding:1rem;">
+    <div style="background:#121212;border:1px solid #2a2a2a;border-radius:14px;
+      padding:2rem 1.8rem;width:100%;max-width:380px;box-shadow:0 32px 80px rgba(0,0,0,0.8);">
+      <h3 style="font-family:'Playfair Display',serif;color:white;font-size:1.3rem;margin-bottom:0.4rem;">
+        🔑 Cambiar Contraseña
+      </h3>
+      <p style="font-size:0.8rem;color:#666;margin-bottom:1.5rem;font-family:'Lato',sans-serif;">
+        Solo afecta tu usuario — el otro no cambia.
+      </p>
+      <div id="cp-error"   style="display:none;background:rgba(229,9,20,0.1);border:1px solid rgba(229,9,20,0.3);border-radius:6px;color:#ff6b6b;font-size:0.82rem;padding:0.6rem 0.9rem;margin-bottom:1rem;text-align:center;"></div>
+      <div id="cp-success" style="display:none;background:rgba(70,211,105,0.1);border:1px solid rgba(70,211,105,0.3);border-radius:6px;color:#46d369;font-size:0.82rem;padding:0.6rem 0.9rem;margin-bottom:1rem;text-align:center;"></div>
+      <div style="margin-bottom:1rem;">
+        <label style="display:block;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#666;margin-bottom:0.4rem;">Nueva contraseña</label>
+        <input id="cp-new" type="password" placeholder="Mínimo 6 caracteres"
+          style="width:100%;background:#0d0d0d;border:2px solid #222;border-radius:8px;color:white;font-family:'Lato',sans-serif;font-size:0.95rem;padding:0.75rem 1rem;box-sizing:border-box;-webkit-appearance:none;"
+          onfocus="this.style.borderColor='#e50914'" onblur="this.style.borderColor='#222'"/>
+      </div>
+      <div style="margin-bottom:1.4rem;">
+        <label style="display:block;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#666;margin-bottom:0.4rem;">Confirmar contraseña</label>
+        <input id="cp-confirm" type="password" placeholder="Repite la contraseña"
+          style="width:100%;background:#0d0d0d;border:2px solid #222;border-radius:8px;color:white;font-family:'Lato',sans-serif;font-size:0.95rem;padding:0.75rem 1rem;box-sizing:border-box;-webkit-appearance:none;"
+          onfocus="this.style.borderColor='#e50914'" onblur="this.style.borderColor='#222'"/>
+      </div>
+      <div style="display:flex;gap:0.7rem;">
+        <button id="cp-submit-btn" onclick="handleChangePassword()"
+          style="flex:1;background:#e50914;color:white;border:none;border-radius:8px;font-family:'Lato',sans-serif;font-size:0.95rem;font-weight:700;padding:0.8rem;cursor:pointer;">
+          💾 Guardar
+        </button>
+        <button onclick="closeChangePasswordModal()"
+          style="flex:1;background:#1a1a1a;color:#aaa;border:1px solid #2a2a2a;border-radius:8px;font-family:'Lato',sans-serif;font-size:0.95rem;padding:0.8rem;cursor:pointer;">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       MODAL: FAVORITOS
+  ═══════════════════════════════════ -->
+  <div id="favs-modal" style="display:none;position:fixed;inset:0;z-index:4000;
+    background:rgba(0,0,0,0.88);align-items:flex-start;justify-content:center;
+    padding:2rem 1rem;overflow-y:auto;">
+    <div style="background:#121212;border:1px solid #2a2a2a;border-radius:14px;
+      width:100%;max-width:600px;overflow:hidden;margin:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;
+        padding:1.4rem 1.6rem;border-bottom:1px solid #1e1e1e;">
+        <h3 style="font-family:'Playfair Display',serif;color:white;font-size:1.3rem;">
+          💖 Mis Favoritos
+        </h3>
+        <button onclick="closeFavoritesModal()" style="width:32px;height:32px;border-radius:50%;
+          background:#2a2a2a;border:none;color:#aaa;cursor:pointer;font-size:0.9rem;">✕</button>
+      </div>
+      <div id="favs-grid" style="padding:1.4rem;display:grid;
+        grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;"></div>
+      <div id="favs-empty" style="display:none;padding:3rem;text-align:center;color:#444;
+        font-family:'Lato',sans-serif;font-size:0.9rem;">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">💔</div>
+        Aún no tienes favoritos.<br>Dale ♥ a los recuerdos que más te gusten.
       </div>
     </div>
   </div>
@@ -406,23 +425,30 @@
   <!-- ══════════════════════════════════
        SCRIPTS
   ═══════════════════════════════════ -->
-  <!-- intro.js va PRIMERO para que se inyecte antes que cualquier otro script -->
   <script src="assets/js/intro.js"></script>
   <script src="assets/js/data.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/upload.js"></script>
+  <script src="assets/js/auth.js"></script>
+
   <script>
+    /* ── Modales con IDs fijos para openModal ── */
+    const _modalPlayBtn = document.getElementById('modal-play-btn');
+    const _modalFavBtn  = document.getElementById('modal-fav-btn');
+
     /* ── Poblar emojis y categorías del modal de subida ── */
     document.addEventListener('DOMContentLoaded', () => {
+
+      // Emojis
       const emojis = ['📸','🎬','🌹','💋','🏖️','✈️','🎂','💝','🌿','☕','🎵','🏠','🌸','💃','⛺'];
       const row = document.getElementById('um-emoji-row');
       if (row) {
         emojis.forEach((e, i) => {
           const btn = document.createElement('button');
-          btn.className = 'um-emoji-opt' + (i === 0 ? ' selected' : '');
+          btn.className   = 'um-emoji-opt' + (i === 0 ? ' selected' : '');
           btn.textContent = e;
-          btn.type = 'button';
-          btn.onclick = () => {
+          btn.type        = 'button';
+          btn.onclick     = () => {
             document.querySelectorAll('.um-emoji-opt').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             document.getElementById('um-emoji').value = e;
@@ -431,111 +457,40 @@
         });
       }
 
+      // Categorías
       const sel = document.getElementById('um-category');
-      if (sel) {
+      if (sel && typeof UPLOAD_CATEGORIES !== 'undefined') {
         UPLOAD_CATEGORIES.forEach(cat => {
-          const opt = document.createElement('option');
-          opt.value = cat.id;
+          const opt       = document.createElement('option');
+          opt.value       = cat.id;
           opt.textContent = cat.label;
           sel.appendChild(opt);
         });
       }
+
+      // Partículas login
+      const emojisP   = ['❤️','🌹','💋','✨','💫','🥰'];
+      const container = document.getElementById('login-particles');
+      if (container) {
+        for (let i = 0; i < 12; i++) {
+          const p         = document.createElement('div');
+          p.className     = 'login-particle';
+          p.textContent   = emojisP[i % emojisP.length];
+          p.style.left              = Math.random() * 100 + '%';
+          p.style.animationDuration = (8 + Math.random() * 10) + 's';
+          p.style.animationDelay    = (Math.random() * 8) + 's';
+          p.style.fontSize          = (0.8 + Math.random() * 1.2) + 'rem';
+          container.appendChild(p);
+        }
+      }
     });
   </script>
-<script src="assets/js/auth.js"></script>
-<script>
-  // Partículas flotantes decorativas
-  const emojis = ['❤️','🌹','💋','✨','💫','🥰'];
-  const container = document.getElementById('login-particles');
-  if (container) {
-    for (let i = 0; i < 12; i++) {
-      const p = document.createElement('div');
-      p.className = 'login-particle';
-      p.textContent = emojis[i % emojis.length];
-      p.style.left     = Math.random() * 100 + '%';
-      p.style.animationDuration  = (8 + Math.random() * 10) + 's';
-      p.style.animationDelay     = (Math.random() * 8) + 's';
-      p.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
-      container.appendChild(p);
-    }
-  }
-</script>
-<!-- MODAL: CAMBIAR CONTRASEÑA -->
-<div id="change-pass-modal" style="
-  display:none; position:fixed; inset:0; z-index:5000;
-  background:rgba(0,0,0,0.85); align-items:center; justify-content:center; padding:1rem;">
-  <div style="
-    background:#121212; border:1px solid #2a2a2a; border-radius:14px;
-    padding:2rem 1.8rem; width:100%; max-width:380px;
-    box-shadow:0 32px 80px rgba(0,0,0,0.8);">
-    <h3 style="font-family:'Playfair Display',serif;color:white;font-size:1.3rem;margin-bottom:0.4rem;">
-      🔑 Cambiar Contraseña
-    </h3>
-    <p style="font-size:0.8rem;color:#666;margin-bottom:1.5rem;font-family:'Lato',sans-serif;">
-      Solo afecta tu usuario — el otro no cambia.
-    </p>
-    <div id="cp-error" style="display:none;background:rgba(229,9,20,0.1);border:1px solid rgba(229,9,20,0.3);
-      border-radius:6px;color:#ff6b6b;font-size:0.82rem;padding:0.6rem 0.9rem;margin-bottom:1rem;text-align:center;"></div>
-    <div id="cp-success" style="display:none;background:rgba(70,211,105,0.1);border:1px solid rgba(70,211,105,0.3);
-      border-radius:6px;color:#46d369;font-size:0.82rem;padding:0.6rem 0.9rem;margin-bottom:1rem;text-align:center;"></div>
-    <div style="margin-bottom:1rem;">
-      <label style="display:block;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#666;margin-bottom:0.4rem;">
-        Nueva contraseña
-      </label>
-      <input id="cp-new" type="password" placeholder="Mínimo 6 caracteres"
-        style="width:100%;background:#0d0d0d;border:2px solid #222;border-radius:8px;color:white;
-               font-family:'Lato',sans-serif;font-size:0.95rem;padding:0.75rem 1rem;box-sizing:border-box;
-               transition:border-color 0.2s;-webkit-appearance:none;"
-        onfocus="this.style.borderColor='#e50914'" onblur="this.style.borderColor='#222'"/>
-    </div>
-    <div style="margin-bottom:1.4rem;">
-      <label style="display:block;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#666;margin-bottom:0.4rem;">
-        Confirmar contraseña
-      </label>
-      <input id="cp-confirm" type="password" placeholder="Repite la contraseña"
-        style="width:100%;background:#0d0d0d;border:2px solid #222;border-radius:8px;color:white;
-               font-family:'Lato',sans-serif;font-size:0.95rem;padding:0.75rem 1rem;box-sizing:border-box;
-               transition:border-color 0.2s;-webkit-appearance:none;"
-        onfocus="this.style.borderColor='#e50914'" onblur="this.style.borderColor='#222'"/>
-    </div>
-    <div style="display:flex;gap:0.7rem;">
-      <button id="cp-submit-btn" onclick="handleChangePassword()"
-        style="flex:1;background:#e50914;color:white;border:none;border-radius:8px;
-               font-family:'Lato',sans-serif;font-size:0.95rem;font-weight:700;padding:0.8rem;
-               cursor:pointer;transition:background 0.2s;">
-        💾 Guardar
-      </button>
-      <button onclick="closeChangePasswordModal()"
-        style="flex:1;background:#1a1a1a;color:#aaa;border:1px solid #2a2a2a;border-radius:8px;
-               font-family:'Lato',sans-serif;font-size:0.95rem;padding:0.8rem;cursor:pointer;">
-        Cancelar
-      </button>
-    </div>
-  </div>
-</div>
-<!-- MODAL: FAVORITOS -->
-<div id="favs-modal" style="display:none;position:fixed;inset:0;z-index:4000;
-  background:rgba(0,0,0,0.88);align-items:flex-start;justify-content:center;
-  padding:2rem 1rem;overflow-y:auto;">
-  <div style="background:#121212;border:1px solid #2a2a2a;border-radius:14px;
-    width:100%;max-width:600px;overflow:hidden;margin:auto;">
-    <div style="display:flex;align-items:center;justify-content:space-between;
-      padding:1.4rem 1.6rem;border-bottom:1px solid #1e1e1e;">
-      <h3 style="font-family:'Playfair Display',serif;color:white;font-size:1.3rem;">
-        💖 Mis Favoritos
-      </h3>
-      <button onclick="closeFavoritesModal()" style="width:32px;height:32px;border-radius:50%;
-        background:#2a2a2a;border:none;color:#aaa;cursor:pointer;font-size:0.9rem;">✕</button>
-    </div>
-    <div id="favs-grid" style="padding:1.4rem;display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;">
-    </div>
-    <div id="favs-empty" style="display:none;padding:3rem;text-align:center;color:#444;
-      font-family:'Lato',sans-serif;font-size:0.9rem;">
-      <div style="font-size:2.5rem;margin-bottom:1rem;">💔</div>
-      Aún no tienes favoritos.<br>Dale ♥ a los recuerdos que más te gusten.
-    </div>
-  </div>
-</div>
+
+  <!-- CSS extra para modales que usan display:flex al abrirse -->
+  <style>
+    #change-pass-modal.open { display: flex !important; }
+    #favs-modal.open        { display: flex !important; }
+  </style>
+
 </body>
 </html>
