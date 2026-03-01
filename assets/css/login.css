@@ -287,3 +287,5 @@
     padding-bottom: max(2.4rem, env(safe-area-inset-bottom));
   }
 }
+#change-pass-modal { display: none; }
+#change-pass-modal.open { display: flex !important; }

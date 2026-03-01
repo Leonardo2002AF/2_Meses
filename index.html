@@ -36,6 +36,18 @@
              placeholder="••••••••" autocomplete="current-password"/>
     </div>
     <button id="login-submit-btn" onclick="handleLoginSubmit()">Entrar</button>
+
+        <button onclick="enterGuestMode()" style="
+          width:100%; background:transparent; color:#666;
+          border:1px solid #2a2a2a; border-radius:8px;
+          font-family:'Lato',sans-serif; font-size:0.88rem;
+          padding:0.75rem; cursor:pointer; margin-top:0.6rem;
+          transition:border-color 0.2s, color 0.2s;
+          letter-spacing:0.3px;"
+          onmouseover="this.style.borderColor='#555';this.style.color='#aaa'"
+          onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#666'">
+          👀 Entrar como invitado
+        </button>
     <div class="login-hint">
       <div class="login-hint-user" onclick="document.getElementById('login-input-user').value='KerllyV';document.getElementById('login-input-user').focus()">
         <span>🌸</span><span>KerllyV</span>
@@ -448,5 +460,58 @@
     }
   }
 </script>
+<!-- MODAL: CAMBIAR CONTRASEÑA -->
+<div id="change-pass-modal" style="
+  display:none; position:fixed; inset:0; z-index:5000;
+  background:rgba(0,0,0,0.85); align-items:center; justify-content:center; padding:1rem;">
+  <div style="
+    background:#121212; border:1px solid #2a2a2a; border-radius:14px;
+    padding:2rem 1.8rem; width:100%; max-width:380px;
+    box-shadow:0 32px 80px rgba(0,0,0,0.8);">
+    <h3 style="font-family:'Playfair Display',serif;color:white;font-size:1.3rem;margin-bottom:0.4rem;">
+      🔑 Cambiar Contraseña
+    </h3>
+    <p style="font-size:0.8rem;color:#666;margin-bottom:1.5rem;font-family:'Lato',sans-serif;">
+      Solo afecta tu usuario — el otro no cambia.
+    </p>
+    <div id="cp-error" style="display:none;background:rgba(229,9,20,0.1);border:1px solid rgba(229,9,20,0.3);
+      border-radius:6px;color:#ff6b6b;font-size:0.82rem;padding:0.6rem 0.9rem;margin-bottom:1rem;text-align:center;"></div>
+    <div id="cp-success" style="display:none;background:rgba(70,211,105,0.1);border:1px solid rgba(70,211,105,0.3);
+      border-radius:6px;color:#46d369;font-size:0.82rem;padding:0.6rem 0.9rem;margin-bottom:1rem;text-align:center;"></div>
+    <div style="margin-bottom:1rem;">
+      <label style="display:block;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#666;margin-bottom:0.4rem;">
+        Nueva contraseña
+      </label>
+      <input id="cp-new" type="password" placeholder="Mínimo 6 caracteres"
+        style="width:100%;background:#0d0d0d;border:2px solid #222;border-radius:8px;color:white;
+               font-family:'Lato',sans-serif;font-size:0.95rem;padding:0.75rem 1rem;box-sizing:border-box;
+               transition:border-color 0.2s;-webkit-appearance:none;"
+        onfocus="this.style.borderColor='#e50914'" onblur="this.style.borderColor='#222'"/>
+    </div>
+    <div style="margin-bottom:1.4rem;">
+      <label style="display:block;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#666;margin-bottom:0.4rem;">
+        Confirmar contraseña
+      </label>
+      <input id="cp-confirm" type="password" placeholder="Repite la contraseña"
+        style="width:100%;background:#0d0d0d;border:2px solid #222;border-radius:8px;color:white;
+               font-family:'Lato',sans-serif;font-size:0.95rem;padding:0.75rem 1rem;box-sizing:border-box;
+               transition:border-color 0.2s;-webkit-appearance:none;"
+        onfocus="this.style.borderColor='#e50914'" onblur="this.style.borderColor='#222'"/>
+    </div>
+    <div style="display:flex;gap:0.7rem;">
+      <button id="cp-submit-btn" onclick="handleChangePassword()"
+        style="flex:1;background:#e50914;color:white;border:none;border-radius:8px;
+               font-family:'Lato',sans-serif;font-size:0.95rem;font-weight:700;padding:0.8rem;
+               cursor:pointer;transition:background 0.2s;">
+        💾 Guardar
+      </button>
+      <button onclick="closeChangePasswordModal()"
+        style="flex:1;background:#1a1a1a;color:#aaa;border:1px solid #2a2a2a;border-radius:8px;
+               font-family:'Lato',sans-serif;font-size:0.95rem;padding:0.8rem;cursor:pointer;">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
