@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nuestros Recuerdos ♥</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════ -->
+  <nav id="navbar">
+    <a class="nav-logo" href="#">Nuestros<span>♥</span>Recuerdos</a>
+
+    <ul class="nav-links">
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#c1">Recientes</a></li>
+      <li><a href="#c4">Viajes</a></li>
+      <li><a href="#c5">Fechas Especiales</a></li>
+      <li><a href="#c6">En Casa</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <span class="nav-icon" title="Buscar">🔍</span>
+      <span class="nav-icon" title="Notificaciones">🔔</span>
+      <div class="nav-avatar" title="Nosotros">💑</div>
+    </div>
+  </nav>
+
+
+  <!-- ══════════════════════════════════
+       HERO
+  ═══════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <span class="hero-badge">💫 Recuerdo del Día</span>
+      <h1 class="hero-title">La Primera Vez que <em>te Vi</em></h1>
+      <div class="hero-meta">
+        <span class="match">💖 99% Amor</span>
+        <span class="year">2024</span>
+        <span class="hearts">♥♥♥♥♥</span>
+      </div>
+      <p class="hero-description">
+        Ese momento mágico donde todo cambió. La luz, tu sonrisa, esa sensación
+        de que algo increíble estaba por comenzar. Un recuerdo que vale para toda la vida.
+      </p>
+      <div class="hero-buttons">
+        <button class="btn btn-play"
+          onclick="openModal({title:'Primera Vez que te Vi', emoji:'💫', gradient:'linear-gradient(135deg,#4a0015,#c0396e)', desc:'El día que todo comenzó. Recuerda ese momento especial que marcó el inicio de nuestra historia.', image:'', video:''})">
+          ▶ Reproducir
+        </button>
+        <button class="btn btn-info"
+          onclick="openModal({title:'Primera Vez que te Vi', emoji:'💫', gradient:'linear-gradient(135deg,#4a0015,#c0396e)', desc:'El día que todo comenzó. Recuerda ese momento especial que marcó el inicio de nuestra historia.', image:'', video:''})">
+          ℹ Más Info
+        </button>
+        <button class="btn btn-red" onclick="addHeart(event)">
+          ♥ Añadir a Mi Lista
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       CONTADOR DE DÍAS JUNTOS
+  ═══════════════════════════════════ -->
+  <div class="counter-section" id="counter-section">
+    <!-- Contenido generado por JS (app.js → updateCounter) -->
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       BANNER ÁLBUM
+  ═══════════════════════════════════ -->
+  <div class="memory-banner">
+    <div class="memory-banner-text">
+      <h3>Nuestro <span>Álbum de Amor</span></h3>
+      <p>
+        Agrega tus videos e imágenes en las carpetas
+        <code style="color:#e50914;font-size:0.8rem">assets/videos/</code> y
+        <code style="color:#e50914;font-size:0.8rem">assets/images/cards/</code>,
+        luego edita <code style="color:#e50914;font-size:0.8rem">assets/js/data.js</code>
+        para enlazarlos.
+      </p>
+    </div>
+    <div class="memory-banner-actions">
+      <button class="btn btn-red">＋ Agregar Recuerdo</button>
+      <button class="btn btn-outline">🎬 Ver Todo</button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SECCIÓN: SEGUIR VIENDO
+  ═══════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title"><span class="icon">▶</span> Seguir Viendo</h2>
+      <a class="section-explore" href="#">Ver todo</a>
+    </div>
+    <div class="carousel-wrapper">
+      <button class="carousel-arrow"      onclick="scrollCarousel('c1',-1)">❮</button>
+      <div class="carousel" id="c1"></div>
+      <button class="carousel-arrow right" onclick="scrollCarousel('c1', 1)">❯</button>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       SECCIÓN: MOMENTOS DESTACADOS
+  ═══════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title"><span class="icon">⭐</span> Momentos Destacados</h2>
+      <a class="section-explore" href="#">Ver todo</a>
+    </div>
+    <div class="carousel-wrapper">
+      <button class="carousel-arrow"      onclick="scrollCarousel('c2',-1)">❮</button>
+      <div class="carousel" id="c2"></div>
+      <button class="carousel-arrow right" onclick="scrollCarousel('c2', 1)">❯</button>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       SECCIÓN: TOP 10
+  ═══════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">🔟 Top 10 Favoritos</h2>
+    </div>
+    <div class="carousel-wrapper">
+      <button class="carousel-arrow"       onclick="scrollCarousel('c3',-1)">❮</button>
+      <div class="carousel" id="c3" style="gap:16px; padding:1rem 4%;"></div>
+      <button class="carousel-arrow right"  onclick="scrollCarousel('c3', 1)">❯</button>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       SECCIÓN: VIAJES JUNTOS
+  ═══════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title"><span class="icon">✈</span> Viajes Juntos</h2>
+      <a class="section-explore" href="#">Ver todo</a>
+    </div>
+    <div class="carousel-wrapper">
+      <button class="carousel-arrow"      onclick="scrollCarousel('c4',-1)">❮</button>
+      <div class="carousel" id="c4"></div>
+      <button class="carousel-arrow right" onclick="scrollCarousel('c4', 1)">❯</button>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       SECCIÓN: FECHAS ESPECIALES
+  ═══════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title"><span class="icon">🎂</span> Fechas Especiales</h2>
+      <a class="section-explore" href="#">Ver todo</a>
+    </div>
+    <div class="carousel-wrapper">
+      <button class="carousel-arrow"      onclick="scrollCarousel('c5',-1)">❮</button>
+      <div class="carousel" id="c5"></div>
+      <button class="carousel-arrow right" onclick="scrollCarousel('c5', 1)">❯</button>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       SECCIÓN: MOMENTOS EN CASA
+  ═══════════════════════════════════ -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title"><span class="icon">🏠</span> Momentos en Casa</h2>
+      <a class="section-explore" href="#">Ver todo</a>
+    </div>
+    <div class="carousel-wrapper">
+      <button class="carousel-arrow"      onclick="scrollCarousel('c6',-1)">❮</button>
+      <div class="carousel" id="c6"></div>
+      <button class="carousel-arrow right" onclick="scrollCarousel('c6', 1)">❯</button>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════ -->
+  <footer>
+    <span class="footer-logo">Nuestros♥Recuerdos</span>
+    <p>Hecho con <span class="footer-heart">♥</span> para ti · Cada momento contigo vale para siempre</p>
+    <p style="margin-top:0.5rem; color:#333;">© 2024 — Solo para los dos</p>
+  </footer>
+
+
+  <!-- ══════════════════════════════════
+       MODAL: RECUERDO
+  ═══════════════════════════════════ -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-hero" id="modal-hero-bg">
+        <div class="modal-hero-overlay"></div>
+        <span style="position:relative;z-index:1;font-size:5rem" id="modal-emoji-inner">💫</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <h2 class="modal-title" id="modal-title">Título</h2>
+        <div class="modal-meta">
+          <span style="color:#46d369;font-weight:700;">💖 99% Amor</span>
+          <span style="color:#aaa">2024</span>
+          <span style="color:var(--pink)">♥♥♥♥♥</span>
+        </div>
+        <div class="modal-video-area" id="modal-media">
+          <span>🎬</span>
+          <p>Agrega aquí tu video o foto del recuerdo</p>
+          <small>assets/videos/ · assets/images/cards/</small>
+        </div>
+        <p class="modal-description" id="modal-desc"></p>
+        <div class="modal-actions">
+          <button class="btn btn-play">▶ Reproducir</button>
+          <button class="btn btn-red" onclick="addHeart(event)">♥ Me Encanta</button>
+          <button class="btn btn-info" onclick="closeModal()">✕ Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       MODAL: CONFIGURAR FECHA
+  ═══════════════════════════════════ -->
+  <div class="date-modal-overlay" id="date-modal">
+    <div class="date-modal">
+      <h3>💞 ¿Desde cuándo estamos juntos?</h3>
+      <p>Elige la fecha especial en que todo comenzó. Puedes cambiarla cuando quieras.</p>
+      <input type="date" id="date-input" max="2099-12-31" />
+      <div class="date-modal-actions">
+        <button class="btn btn-red"  onclick="saveDateAndClose()">♥ Guardar</button>
+        <button class="btn btn-info" onclick="closeDateModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       SCRIPTS
+  ═══════════════════════════════════ -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+
+</body>
+</html>
