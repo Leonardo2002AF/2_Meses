@@ -24,7 +24,7 @@ const HERO = {
   year:        "2025",
   description: "Ese momento mágico donde todo cambió. La luz, tu sonrisa, esa sensación de que algo increíble estaba por comenzar. Un recuerdo que vale para toda la vida.",
   image:       "https://res.cloudinary.com/dwtqq0c7y/image/upload/v1772377096/Home.jpg",   // ← cambia por tu foto
-  video:       "https://res.cloudinary.com/dwtqq0c7y/image/upload/v1772377096/Home.jpg",         // ← o pon tu video
+  video:       "https://player.cloudinary.com/embed/?cloud_name=dwtqq0c7y&public_id=nuestros-recuerdos%2Fprimer_beso_gtqmc4",         // ← o pon tu video
 };
 
 const SECTIONS = [
