@@ -3,7 +3,7 @@
    ══════════════════════════════════════════ */
 
 const CLOUDINARY_CLOUD  = "dwtqq0c7y";
-const CLOUDINARY_PRESET = "2 Meses";
+const CLOUDINARY_PRESET = "2Meses";
 const CLOUDINARY_API_KEY = "779436443365798";
 
 /* ─── Categorías disponibles ─── */
@@ -223,7 +223,7 @@ function uploadToCloudinary(file, contextStr, category, onProgress) {
     form.append('folder',        'nuestros-recuerdos');
     form.append('context',       contextStr);
     // ✅ Tag global para que aparezca en TODOS los dispositivos
-    form.append('tags',          `nuestros-recuerdos,cat_${category || 'c1'}`);
+    form.append('tags', `recuerdos,cat_${category || 'c1'}`);
 
     const resourceType = file.type.startsWith('video/') ? 'video' : 'image';
     const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`;
@@ -279,9 +279,9 @@ async function loadSavedCards() {
 
   try {
     const [imgRes, vidRes] = await Promise.all([
-      fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/list/nuestros-recuerdos.json${bust}`),
-      fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/video/list/nuestros-recuerdos.json${bust}`),
-    ]);
+        fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/list/recuerdos.json${bust}`),
+        fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/video/list/recuerdos.json${bust}`),
+      ]);
 
     const imgData = imgRes.ok ? await imgRes.json() : { resources: [] };
     const vidData = vidRes.ok ? await vidRes.json() : { resources: [] };
