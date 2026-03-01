@@ -190,6 +190,7 @@ nav.scrolled {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 /* ════════════════════════
@@ -208,6 +209,10 @@ nav.scrolled {
   transition: all 0.2s;
   text-decoration: none;
   font-family: 'Lato', sans-serif;
+  width: auto;          /* ← asegura que no se expanda */
+  white-space: nowrap;  /* ← evita que el texto baje de línea */
+  -webkit-appearance: none; /* ← fix específico para iOS Safari */
+  box-sizing: border-box;
 }
 
 /* Blanco — Reproducir */
@@ -806,14 +811,18 @@ footer p { line-height: 1.8; }
   .hero-description { font-size: 0.85rem; line-height: 1.55; margin-bottom: 1.2rem; }
 
   /* Botones hero — en fila, NO ocupan todo el ancho */
-  .hero-buttons { flex-direction: row; flex-wrap: wrap; gap: 0.5rem; }
-  .hero-buttons .btn {
-    width: auto !important;
-    flex: 0 0 auto;
-    font-size: 0.82rem;
-    padding: 0.6rem 1.1rem;
-    justify-content: center;
-  }
+  .hero-buttons {
+      flex-direction: row !important;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .hero-buttons .btn {
+      width: auto !important;
+      flex: 0 0 auto !important;
+      font-size: 0.82rem;
+      padding: 0.6rem 1.1rem;
+      -webkit-appearance: none;
+    }
 
   /* Contador */
   .counter-section {
