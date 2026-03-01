@@ -24,7 +24,7 @@ const HERO = {
   year:        "2024",
   description: "Ese momento mágico donde todo cambió. La luz, tu sonrisa, esa sensación de que algo increíble estaba por comenzar. Un recuerdo que vale para toda la vida.",
   image:       "assets/images/hero/Primera vez.jpeg",   // ← cambia por tu foto
-  video:       "assets/videos/Video 1.mp4",         // ← o pon tu video
+  video:       "assets/images/hero/Primera vez.jpeg",         // ← o pon tu video
 };
 
 const SECTIONS = [
