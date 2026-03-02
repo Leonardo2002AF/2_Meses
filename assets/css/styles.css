@@ -3,19 +3,14 @@
    ══════════════════════════════════════════ */
 
 :root {
-  /* Colores Netflix originales */
   --netflix-red:    #e50914;
-  --netflix-red-h:  #f40612;   /* hover */
-  --netflix-red-d:  #b20710;   /* dark/pressed */
-
-  /* Base */
+  --netflix-red-h:  #f40612;
+  --netflix-red-d:  #b20710;
   --dark:    #141414;
   --darker:  #0a0a0a;
   --card-bg: #1a1a1a;
   --text:    #e5e5e5;
   --muted:   #808080;
-
-  /* Accentos románticos */
   --pink:  #ff6b8a;
   --rose:  #c0396e;
 }
@@ -209,27 +204,24 @@ nav.scrolled {
   transition: all 0.2s;
   text-decoration: none;
   font-family: 'Lato', sans-serif;
-  width: auto;          /* ← asegura que no se expanda */
-  white-space: nowrap;  /* ← evita que el texto baje de línea */
-  -webkit-appearance: none; /* ← fix específico para iOS Safari */
+  width: auto;
+  white-space: nowrap;
+  -webkit-appearance: none;
   box-sizing: border-box;
 }
 
-/* Blanco — Reproducir */
 .btn-play {
   background: white;
   color: black;
 }
 .btn-play:hover { background: rgba(255,255,255,0.75); }
 
-/* Gris — Más Info */
 .btn-info {
   background: rgba(109,109,110,0.7);
   color: white;
 }
 .btn-info:hover { background: rgba(109,109,110,0.4); }
 
-/* ROJO NETFLIX — acción principal */
 .btn-red {
   background: var(--netflix-red);
   color: white;
@@ -241,7 +233,6 @@ nav.scrolled {
 }
 .btn-red:active { background: var(--netflix-red-d); transform: scale(0.98); }
 
-/* Contorno rojo */
 .btn-outline {
   background: transparent;
   color: white;
@@ -275,10 +266,7 @@ nav.scrolled {
   pointer-events: none;
 }
 
-.counter-left {
-  position: relative;
-  z-index: 1;
-}
+.counter-left { position: relative; z-index: 1; }
 
 .counter-label {
   font-size: 0.75rem;
@@ -589,7 +577,8 @@ nav.scrolled {
 }
 
 /* ════════════════════════
-   MODAL
+   MODAL RECUERDO
+   ✅ .active Y .open ambos funcionan
 ════════════════════════ */
 .modal-overlay {
   position: fixed;
@@ -603,6 +592,8 @@ nav.scrolled {
   pointer-events: none;
   transition: opacity 0.3s;
 }
+
+.modal-overlay.active,
 .modal-overlay.open {
   opacity: 1;
   pointer-events: all;
@@ -619,7 +610,11 @@ nav.scrolled {
   max-height: 90vh;
   overflow-y: auto;
 }
-.modal-overlay.open .modal { transform: scale(1); }
+
+.modal-overlay.active .modal,
+.modal-overlay.open .modal {
+  transform: scale(1);
+}
 
 .modal-hero {
   position: relative;
@@ -669,19 +664,23 @@ nav.scrolled {
 .modal-video-area {
   background: #000;
   border-radius: 8px;
-  height: 180px;
+  min-height: 180px;
   display: flex; align-items: center; justify-content: center;
   color: #555;
   font-size: 0.85rem;
   margin-bottom: 1.5rem;
   flex-direction: column;
   gap: 0.5rem;
-  border: 2px dashed #2a2a2a;
+  overflow: hidden;
 }
 .modal-video-area span { font-size: 2rem; }
 .modal-video-area video,
 .modal-video-area img {
-  width: 100%; height: 100%; object-fit: cover; border-radius: 6px;
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 6px;
+  display: block;
 }
 
 .modal-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
@@ -794,7 +793,6 @@ footer p { line-height: 1.8; }
 /* ── Celulares pequeños (hasta 480px) ── */
 @media (max-width: 480px) {
 
-  /* Navbar */
   nav { padding: 0 4%; height: 56px; }
   .nav-logo { font-size: 1.3rem; }
   .nav-links { display: none; }
@@ -802,7 +800,6 @@ footer p { line-height: 1.8; }
   .nav-icon { font-size: 1rem; }
   .nav-avatar { width: 28px; height: 28px; font-size: 0.7rem; }
 
-  /* Hero — más compacto, no ocupa toda la pantalla */
   .hero { height: auto; min-height: unset; padding: 90px 0 40px; }
   .hero-content { padding: 0 5%; max-width: 100%; }
   .hero-title { font-size: 1.8rem; line-height: 1.15; }
@@ -810,21 +807,19 @@ footer p { line-height: 1.8; }
   .hero-meta { flex-wrap: wrap; gap: 0.4rem; font-size: 0.75rem; margin-bottom: 0.7rem; }
   .hero-description { font-size: 0.85rem; line-height: 1.55; margin-bottom: 1.2rem; }
 
-  /* Botones hero — en fila, NO ocupan todo el ancho */
   .hero-buttons {
-      flex-direction: row !important;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .hero-buttons .btn {
-      width: auto !important;
-      flex: 0 0 auto !important;
-      font-size: 0.82rem;
-      padding: 0.6rem 1.1rem;
-      -webkit-appearance: none;
-    }
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .hero-buttons .btn {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    font-size: 0.82rem;
+    padding: 0.6rem 1.1rem;
+    -webkit-appearance: none;
+  }
 
-  /* Contador */
   .counter-section {
     flex-direction: column;
     padding: 1.4rem;
@@ -841,7 +836,6 @@ footer p { line-height: 1.8; }
   .counter-since { justify-content: center; font-size: 0.72rem; }
   .counter-edit-btn .btn { font-size: 0.82rem; padding: 0.55rem 1.2rem; }
 
-  /* Banner */
   .memory-banner {
     flex-direction: column;
     margin: 1rem 3%;
@@ -859,13 +853,11 @@ footer p { line-height: 1.8; }
     white-space: nowrap;
   }
 
-  /* Secciones */
   .section { padding: 0.8rem 0; }
   .section-header { padding: 0 3%; margin-bottom: 0.6rem; }
   .section-title { font-size: 0.95rem; }
   .section-explore { font-size: 0.7rem; }
 
-  /* Carrusel */
   .carousel { padding: 0.4rem 3%; gap: 5px; }
   .card { width: 128px; border-radius: 5px; }
   .card-thumb-placeholder { height: 85px; font-size: 2rem !important; }
@@ -874,19 +866,17 @@ footer p { line-height: 1.8; }
   .card-sub   { font-size: 0.62rem; }
   .card-play  { width: 36px; height: 36px; font-size: 0.9rem; }
 
-  /* Top 10 */
   .top10-card { width: 115px; }
   .top10-img  { height: 82px; font-size: 1.6rem; }
   .top10-num  { font-size: 4rem; bottom: -4px; left: -8px; }
 
-  /* Modal recuerdo */
-  .modal-overlay { padding: 0.5rem; }
+  .modal-overlay { padding: 0.5rem; align-items: center; }
   .modal { width: 100%; border-radius: 10px; }
   .modal-hero { height: 190px; }
   .modal-body { padding: 1rem 1.1rem 1.4rem; }
   .modal-title { font-size: 1.25rem; }
   .modal-meta  { font-size: 0.75rem; flex-wrap: wrap; gap: 0.5rem; }
-  .modal-video-area { height: 130px; font-size: 0.78rem; }
+  .modal-video-area { min-height: 130px; font-size: 0.78rem; }
   .modal-actions { flex-wrap: wrap; gap: 0.5rem; }
   .modal-actions .btn {
     flex: 1 1 auto;
@@ -896,11 +886,9 @@ footer p { line-height: 1.8; }
     min-width: 80px;
   }
 
-  /* Modal fecha */
   .date-modal { padding: 1.5rem; }
   .date-modal h3 { font-size: 1.2rem; }
 
-  /* Upload modal */
   #upload-modal { padding: 0; align-items: flex-end; }
   .um-box { border-radius: 14px 14px 0 0; max-height: 92vh; }
   .um-header { padding: 1.1rem 1.3rem 0.8rem; }
@@ -909,7 +897,6 @@ footer p { line-height: 1.8; }
   .um-input, .um-textarea, .um-select { font-size: 0.88rem; padding: 0.6rem 0.8rem; }
   .um-nav .btn { font-size: 0.82rem; padding: 0.55rem 1.1rem; }
 
-  /* Footer */
   footer { padding: 1.8rem 4%; margin-top: 2.5rem; }
   footer .footer-logo { font-size: 1.1rem; margin-bottom: 0.8rem; }
   footer p { font-size: 0.73rem; }
@@ -927,7 +914,6 @@ footer p { line-height: 1.8; }
   .hero-title { font-size: 2.1rem; }
   .hero-description { font-size: 0.9rem; }
 
-  /* Botones en fila */
   .hero-buttons { flex-direction: row; flex-wrap: wrap; gap: 0.6rem; }
   .hero-buttons .btn {
     width: auto !important;
@@ -977,7 +963,7 @@ footer p { line-height: 1.8; }
   .top10-img  { height: 103px; }
 }
 
-/* ── iOS safe area (notch / Dynamic Island) ── */
+/* ── iOS safe area ── */
 @supports (padding: max(0px)) {
   nav {
     padding-left:  max(4%, env(safe-area-inset-left));

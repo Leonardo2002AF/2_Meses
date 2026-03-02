@@ -282,13 +282,18 @@ function openModal(card) {
 
   // ── Abrir modal ──
   const overlay = document.getElementById('modal');
-  if (overlay) overlay.classList.add('active');
+  if (overlay) {
+    overlay.classList.add('active');
+    overlay.classList.add('open');
+  }
   document.body.style.overflow = 'hidden';
-}
 
 function closeModal() {
   const overlay = document.getElementById('modal');
-  if (overlay) overlay.classList.remove('active');
+  if (overlay) {
+    overlay.classList.remove('active');
+    overlay.classList.remove('open');
+  }
   document.body.style.overflow = '';
 }
 
@@ -440,11 +445,11 @@ function initNavbar() {
 
 /* ─── CERRAR MODALES AL HACER CLIC AFUERA ─── */
 function initOutsideClose() {
-  const modal     = document.getElementById('modal');
-  const dateMod   = document.getElementById('date-modal');
-
-  if (modal)   modal.addEventListener('click',   e => { if (e.target === modal)   closeModal(); });
-  if (dateMod) dateMod.addEventListener('click', e => { if (e.target === dateMod) closeDateModal(); });
+  const dateMod = document.getElementById('date-modal');
+  if (dateMod) dateMod.addEventListener('click', e => {
+    if (e.target === dateMod) closeDateModal();
+  });
+  // El modal principal se cierra con su propio botón ✕
 }
 
 /* ─── INIT ─── */
