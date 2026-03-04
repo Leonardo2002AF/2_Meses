@@ -22,10 +22,10 @@ const HERO = {
   titleEm:     "te Vi",
   match:       "💖 99% Amor",
   year:        "04-12-2025",
-  description: "Ese día te vi y me pareciste muy linda, la luz, tu sonrisa, esa sensación de que algo increíble podríamos vivir y estaba por comenzar. Un recuerdo que siempre tendré en cuenta para toda la vida. Te amo mucho mi amor y siempre lo haré. Gracias por ser parte de mi vida y por hacerme tan feliz. Eres lo mejor que me ha pasado y espero seguir creando recuerdos juntos por siempre.",
+  description: "Ese día te vi y me pareciste muy linda, la luz, tu sonrisa, esa sensación de que algo increíble podríamos vivir y estaba por comenzar. Un recuerdo que siempre tendré en cuenta para toda la vida. Te amo mucho mi amor y siempre lo haré. Gracias por ser parte de mi vida y por hacerme tan feliz. Eres lo mejor que me ha pasado y espero seguir creando recuerdos juntos por siempre. Feliz aniversario #2, mi amor. ❤️",
   image:       "https://res.cloudinary.com/dwtqq0c7y/image/upload/v1772377096/Home.jpg",   // ← cambia por tu foto
   // video:       "https://res.cloudinary.com/dwtqq0c7y/image/upload/v1772422604/gn1gzjytcvixlhnzblik.jpg",   
-  desc:        "Sigo pensando que tengo mucha suerte por haberte conocido, aunque me hayas quitado mi botellita, quien lo diria que por eso empezaria todo, aunque ni me hayas tenido agregado 😒 siento que ese fue un dia muy bonito, a pesar de todo lo malo que paso antes de verte pero de todas maneras... Gracias por existir y por ser parte de mi vida, no olvidare esa fecha. Te amo. ♥",
+  desc:        "Sigo pensando que tengo mucha suerte por haberte conocido, aunque me hayas quitado mi botellita, quien lo diria que por eso empezaria todo, aunque ni me hayas tenido agregado 😒 siento que ese fue un dia muy bonito, a pesar de todo lo malo que paso antes de verte pero de todas maneras... Gracias por existir y por ser parte de mi vida, no olvidare esa fecha. Por ello, eh preparado este album digital donde ambos podamos subir todos nuestros recuerdos bonitos y verlos las veces que queramos y cuando queramos. Te amo mi vida ❤️",
 };
 
 const SECTIONS = [
