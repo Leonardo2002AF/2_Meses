@@ -408,11 +408,18 @@ async function openModal(card) {
   }
 
   const overlay = document.getElementById('modal');
+  // ── Inyectar sección de comentarios ──
+  const commentsContainer = document.getElementById('modal-comments-container');
+  if (commentsContainer && typeof renderCommentsSection === 'function') {
+    commentsContainer.innerHTML = '';
+    renderCommentsSection(card, commentsContainer);
+  }
   if (overlay) overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
+  window._activeCommentsRid = null; // ← agregar esta línea
   const overlay = document.getElementById('modal');
   if (overlay) overlay.classList.remove('active');
   document.body.style.overflow = '';

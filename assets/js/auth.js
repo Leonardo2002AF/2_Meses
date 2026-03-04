@@ -123,7 +123,7 @@ function hideLoginScreen() {
   setTimeout(() => {
     overlay.classList.remove('active', 'hiding');
     document.body.style.overflow = '';
-    runCascadeAnimation();
+    initAnniversary(() => runCascadeAnimation());
   }, 600);
 }
 

@@ -8,11 +8,13 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script> 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/anniversary.css" />
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="stylesheet" href="assets/css/intro.css" />
   <link rel="stylesheet" href="assets/css/upload.css" />
   <link rel="stylesheet" href="assets/css/login.css" />
   <link rel="stylesheet" href="assets/css/cascade.css" />
+  <link rel="stylesheet" href="assets/css/comments.css" />
 </head>
 <body>
 
@@ -242,6 +244,7 @@
           <p>Agrega aquí tu video o foto del recuerdo</p>
         </div>
         <p class="modal-description" id="modal-desc"></p>
+        <div id="modal-comments-container"></div>
         <div class="modal-actions">
           <button class="btn btn-play" id="modal-play-btn">▶ Reproducir</button>
           <button class="btn btn-red  btn-fav" id="modal-fav-btn">♥ Me Encanta</button>
@@ -428,12 +431,14 @@
   <!-- ══════════════════════════════════
        SCRIPTS
   ═══════════════════════════════════ -->
-  <script src="assets/js/intro.js"></script>
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/upload.js"></script>
-  <script src="assets/js/notifications.js"></script>
-  <script src="assets/js/auth.js"></script>
-  <script src="assets/js/app.js"></script> <!-- upload.js al final -->
+<script src="assets/js/intro.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/upload.js"></script>
+<script src="assets/js/notifications.js"></script>
+<script src="assets/js/comments.js"></script>
+<script src="assets/js/anniversary.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/app.js"></script>
 
   <script>
     /* ── Modales con IDs fijos para openModal ── */
