@@ -1,7 +1,5 @@
 /* ══════════════════════════════════════════
-   NUESTROS RECUERDOS — Timeline
-   Agrupa recuerdos por mes/año del más
-   reciente al más antiguo con filtros
+   NUESTROS RECUERDOS — Timeline Netflix Style
    ══════════════════════════════════════════ */
 
 const MESES_ES = [
@@ -18,32 +16,43 @@ const CAT_LABELS = {
 };
 
 let _tlAllCards     = [];
-let _tlActiveFilter = 'all'; // 'all' | 'YYYY-MM'
+let _tlActiveFilter = 'all';
 
-/* ─── Abrir Timeline ─── */
+/* ─── Abrir ─── */
 async function openTimeline() {
   const modal = document.getElementById('timeline-modal');
   if (!modal) return;
-
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
 
   const body = document.getElementById('tl-body');
-  if (body) body.innerHTML = '<div class="tl-loading">Cargando recuerdos... ⏳</div>';
+  if (body) body.innerHTML = '<div class="tl-loading">💫 Cargando recuerdos...</div>';
 
-  // Cargar todos los recuerdos
+  _tlActiveFilter = 'all';
   await loadTimelineCards();
+  updateTlStats();
   renderTimeline();
 }
 
-/* ─── Cerrar Timeline ─── */
+/* ─── Cerrar ─── */
 function closeTimeline() {
   const modal = document.getElementById('timeline-modal');
   if (modal) modal.classList.remove('open');
   document.body.style.overflow = '';
 }
 
-/* ─── Cargar cards desde Cloudinary + localStorage ─── */
+/* ─── Estadísticas ─── */
+function updateTlStats() {
+  const totalEl  = document.getElementById('tl-stat-total');
+  const monthsEl = document.getElementById('tl-stat-months');
+  if (totalEl)  totalEl.textContent  = _tlAllCards.length;
+  if (monthsEl) {
+    const months = new Set(_tlAllCards.map(c => getMonthKey(c)).filter(k => k !== 'sin-fecha'));
+    monthsEl.textContent = months.size;
+  }
+}
+
+/* ─── Cargar cards ─── */
 async function loadTimelineCards() {
   _tlAllCards = [];
 
@@ -84,12 +93,12 @@ async function loadTimelineCards() {
     });
 
   } catch(e) {
-    console.warn('Timeline: error cargando Cloudinary:', e);
+    console.warn('Timeline error:', e);
   }
 
-  // Agregar también los de localStorage si no están ya
+  // localStorage como respaldo
   try {
-    const ls  = JSON.parse(localStorage.getItem('nuestrosRecuerdos_cards') || '{}');
+    const ls = JSON.parse(localStorage.getItem('nuestrosRecuerdos_cards') || '{}');
     const existing = new Set(_tlAllCards.map(c => c.image || c.video));
     Object.entries(ls).forEach(([catId, cards]) => {
       cards.forEach(card => {
@@ -101,11 +110,10 @@ async function loadTimelineCards() {
     });
   } catch(e) {}
 
-  // Ordenar del más reciente al más antiguo
   _tlAllCards.sort((a, b) => b._ts - a._ts);
 }
 
-/* ─── Convertir "21 Febrero 2026" a timestamp ─── */
+/* ─── Parsear fecha ─── */
 function parseFechaToTs(fecha) {
   if (!fecha) return 0;
   const mesesMap = {
@@ -117,14 +125,12 @@ function parseFechaToTs(fecha) {
     const d = parseInt(parts[0]);
     const m = mesesMap[parts[1]];
     const y = parseInt(parts[2]);
-    if (!isNaN(d) && m !== undefined && !isNaN(y)) {
-      return new Date(y, m, d).getTime();
-    }
+    if (!isNaN(d) && m !== undefined && !isNaN(y)) return new Date(y, m, d).getTime();
   }
   return 0;
 }
 
-/* ─── Obtener clave mes/año de un card ─── */
+/* ─── Clave mes ─── */
 function getMonthKey(card) {
   if (!card.fecha) return 'sin-fecha';
   const parts = card.fecha.toLowerCase().split(' ');
@@ -138,7 +144,13 @@ function getMonthKey(card) {
   return 'sin-fecha';
 }
 
-/* ─── Render principal ─── */
+/* ─── Formato mes ─── */
+function formatMonthKey(key) {
+  const [y, m] = key.split('-');
+  return `${MESES_ES[parseInt(m) - 1] || '?'} ${y}`;
+}
+
+/* ─── Render ─── */
 function renderTimeline() {
   buildFilters();
 
@@ -158,7 +170,7 @@ function renderTimeline() {
     return;
   }
 
-  // Agrupar por mes/año
+  // Agrupar por mes
   const groups = {};
   filtered.forEach(card => {
     const key = getMonthKey(card);
@@ -166,7 +178,6 @@ function renderTimeline() {
     groups[key].push(card);
   });
 
-  // Ordenar grupos del más reciente
   const sortedKeys = Object.keys(groups).sort((a, b) => {
     if (a === 'sin-fecha') return 1;
     if (b === 'sin-fecha') return -1;
@@ -175,31 +186,51 @@ function renderTimeline() {
 
   body.innerHTML = '';
 
-  sortedKeys.forEach(key => {
+  // Separadores de año
+  let lastYear = null;
+
+  sortedKeys.forEach((key, idx) => {
     const cards = groups[key];
+    const year  = key !== 'sin-fecha' ? key.split('-')[0] : null;
+
+    // Separador de año
+    if (year && year !== lastYear) {
+      lastYear = year;
+      const sep = document.createElement('div');
+      sep.className = 'tl-year-separator';
+      sep.innerHTML = `
+        <span class="tl-year-label">${year}</span>
+        <div class="tl-year-line"></div>
+      `;
+      body.appendChild(sep);
+    }
+
     const label = key === 'sin-fecha' ? 'Sin fecha' : formatMonthKey(key);
+    const [mesName, anio] = label.split(' ');
 
     const group = document.createElement('div');
     group.className = 'tl-month-group';
+    group.style.animationDelay = `${idx * 0.05}s`;
 
     group.innerHTML = `
       <div class="tl-month-header">
-        <div class="tl-month-dot"></div>
-        <h3 class="tl-month-title">${label}</h3>
+        <div class="tl-month-dot-wrap">
+          <div class="tl-month-dot"></div>
+        </div>
+        <h3 class="tl-month-title"><em>${mesName}</em> ${anio || ''}</h3>
         <span class="tl-month-count">${cards.length} recuerdo${cards.length !== 1 ? 's' : ''}</span>
         <div class="tl-month-line"></div>
       </div>
-      <div class="tl-grid" id="tl-grid-${key.replace(/[^a-z0-9]/gi,'_')}"></div>
+      <div class="tl-grid"></div>
     `;
-
-    body.appendChild(group);
 
     const grid = group.querySelector('.tl-grid');
     cards.forEach(card => grid.appendChild(buildTlCard(card)));
+    body.appendChild(group);
   });
 }
 
-/* ─── Construir tarjeta ─── */
+/* ─── Tarjeta ─── */
 function buildTlCard(card) {
   const el = document.createElement('div');
   el.className = 'tl-card';
@@ -207,20 +238,15 @@ function buildTlCard(card) {
   let thumbHTML = '';
   if (card.image) {
     thumbHTML = `<img class="tl-card-thumb" src="${card.image}" alt="${card.title}"
-      onerror="this.parentElement.innerHTML='<div class=\\'tl-card-thumb-placeholder\\'  style=\\'background:${card.gradient}\\'>${card.emoji}</div>'"/>`;
+      onerror="this.style.display='none';this.parentElement.style.background='${card.gradient}'"/>`;
   } else if (card.video) {
     const afterUpload = card.video.split('/upload/')[1] || '';
     const pubId = afterUpload.replace(/^v\d+\//, '').replace(/\.[^/.]+$/, '');
     const thumb = `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/video/upload/w_300,h_200,c_fill,so_2/${pubId}.jpg`;
     thumbHTML = `
-      <div style="position:relative;">
-        <img class="tl-card-thumb" src="${thumb}" alt="${card.title}"
-          onerror="this.parentElement.style.background='${card.gradient}';this.style.display='none'"/>
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.85);
-            display:flex;align-items:center;justify-content:center;font-size:0.75rem;">▶</div>
-        </div>
-      </div>`;
+      <img class="tl-card-thumb" src="${thumb}" alt="${card.title}"
+        onerror="this.style.display='none';this.parentElement.style.background='${card.gradient}'"/>
+      <span class="tl-video-badge">VIDEO</span>`;
   } else {
     thumbHTML = `<div class="tl-card-thumb-placeholder" style="background:${card.gradient}">${card.emoji}</div>`;
   }
@@ -229,6 +255,7 @@ function buildTlCard(card) {
 
   el.innerHTML = `
     ${thumbHTML}
+    <div class="tl-card-play">▶</div>
     <div class="tl-card-info">
       <div class="tl-card-title">${card.title}</div>
       ${card.fecha ? `<div class="tl-card-fecha">📅 ${card.fecha}</div>` : ''}
@@ -244,26 +271,23 @@ function buildTlCard(card) {
   return el;
 }
 
-/* ─── Construir filtros ─── */
+/* ─── Filtros ─── */
 function buildFilters() {
   const container = document.getElementById('tl-filter-scroll');
   if (!container) return;
 
-  // Obtener todos los meses únicos
   const monthKeys = [...new Set(_tlAllCards.map(c => getMonthKey(c)))]
     .filter(k => k !== 'sin-fecha')
     .sort((a, b) => b.localeCompare(a));
 
   container.innerHTML = '';
 
-  // Botón "Todos"
   const allBtn = document.createElement('button');
   allBtn.className = `tl-filter-btn ${_tlActiveFilter === 'all' ? 'active' : ''}`;
   allBtn.textContent = `Todos (${_tlAllCards.length})`;
   allBtn.onclick = () => { _tlActiveFilter = 'all'; renderTimeline(); };
   container.appendChild(allBtn);
 
-  // Un botón por mes
   monthKeys.forEach(key => {
     const count = _tlAllCards.filter(c => getMonthKey(c) === key).length;
     const btn   = document.createElement('button');
@@ -273,19 +297,12 @@ function buildFilters() {
     container.appendChild(btn);
   });
 
-  // Botón "Sin fecha" si hay
   const sinFecha = _tlAllCards.filter(c => getMonthKey(c) === 'sin-fecha');
   if (sinFecha.length > 0) {
-    const btn   = document.createElement('button');
+    const btn = document.createElement('button');
     btn.className   = `tl-filter-btn ${_tlActiveFilter === 'sin-fecha' ? 'active' : ''}`;
     btn.textContent = `Sin fecha (${sinFecha.length})`;
     btn.onclick     = () => { _tlActiveFilter = 'sin-fecha'; renderTimeline(); };
     container.appendChild(btn);
   }
-}
-
-/* ─── Formato "2026-02" → "Febrero 2026" ─── */
-function formatMonthKey(key) {
-  const [y, m] = key.split('-');
-  return `${MESES_ES[parseInt(m) - 1] || '?'} ${y}`;
 }

@@ -539,9 +539,20 @@
 <div id="timeline-modal">
   <div class="tl-header">
     <div class="tl-header-left">
+      <span class="tl-header-icon">📅</span>
       <div>
-        <h2 class="tl-title">📅 Timeline de Recuerdos</h2>
-        <p class="tl-subtitle">Todos nuestros momentos ordenados por fecha</p>
+        <h2 class="tl-title">Nuestro <span>Timeline</span></h2>
+        <p class="tl-subtitle">Todos nuestros recuerdos · ordenados por fecha</p>
+      </div>
+      <div class="tl-stats">
+        <div class="tl-stat">
+          <div class="tl-stat-num" id="tl-stat-total">0</div>
+          <div class="tl-stat-label">Recuerdos</div>
+        </div>
+        <div class="tl-stat">
+          <div class="tl-stat-num" id="tl-stat-months">0</div>
+          <div class="tl-stat-label">Meses</div>
+        </div>
       </div>
     </div>
     <button class="tl-close" onclick="closeTimeline()">✕</button>
