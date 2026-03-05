@@ -69,15 +69,15 @@ async function saveEditChanges() {
   const fechaFormatted = newFecha ? formatFechaDisplay(newFecha) : (card.fecha || '');
 
   try {
-    // Obtener publicId correctamente — elimina versión y extensión
-    const mediaUrl = card.image || card.video || '';
-    const publicId = mediaUrl.includes('/upload/')
+    const mediaUrl     = card.image || card.video || '';
+    const resourceType = card.video ? 'video' : 'image';
+    const publicId     = mediaUrl.includes('/upload/')
       ? mediaUrl.split('/upload/').pop()
-          .replace(/^v\d+\//, '')     // elimina v1234567/
-          .replace(/\.[^.]+$/, '')    // elimina extensión .jpg .mp4 etc
+          .replace(/^v\d+\//, '')
+          .replace(/\.[^.]+$/, '')
       : '';
 
-    console.log('publicId enviado:', publicId);
+    console.log('publicId enviado:', publicId, '| tipo:', resourceType);
 
     if (!publicId) throw new Error('No se pudo obtener el publicId');
 
@@ -86,10 +86,11 @@ async function saveEditChanges() {
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
         publicId,
-        title: newTitle,
-        desc:  newDesc,
-        fecha: fechaFormatted,
-        catId: newCat,
+        title:        newTitle,
+        desc:         newDesc,
+        fecha:        fechaFormatted,
+        catId:        newCat,
+        resourceType,
       }),
     });
 
@@ -113,9 +114,7 @@ async function saveEditChanges() {
     if (descEl)  descEl.textContent  = newDesc;
     if (fechaEl) fechaEl.textContent = fechaFormatted ? `📅 ${fechaFormatted}` : '';
 
-    // Actualizar tarjeta en carrusel
     updateCardInCarousel(card);
-
     showEditSuccess('¡Cambios guardados! ✨');
     setTimeout(closeEditModal, 1200);
 

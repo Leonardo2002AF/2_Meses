@@ -11,11 +11,14 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: 'Method not allowed' };
   }
   try {
-    const { publicId, title, desc, fecha, catId } = JSON.parse(event.body);
+    const { publicId, title, desc, fecha, catId, resourceType } = JSON.parse(event.body);
+
     await cloudinary.uploader.explicit(publicId, {
-      type: 'upload',
-      context: `alt=${title}|caption=${desc}|fecha=${fecha}|catId=${catId}`,
+      type:          'upload',
+      resource_type: resourceType || 'image',
+      context:       `title=${title}|sub=${desc}|desc=${desc}|fecha=${fecha}|category=${catId}`,
     });
+
     return { statusCode: 200, body: JSON.stringify({ ok: true }) };
   } catch(e) {
     return { statusCode: 500, body: JSON.stringify({ error: e.message }) };
