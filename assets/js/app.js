@@ -406,6 +406,12 @@ async function openModal(card) {
       favBtn.style.display = 'none';
     }
   }
+  // Botón editar
+const editBtn = document.getElementById('modal-edit-btn');
+if (editBtn) {
+  editBtn.style.display = '';
+  editBtn.onclick = () => openEditModal(card);
+}
 
   const overlay = document.getElementById('modal');
   // ── Inyectar sección de comentarios ──

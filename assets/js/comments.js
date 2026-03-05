@@ -14,24 +14,7 @@ function getRecuerdoId(card) {
     .substring(0, 40);
 }
 
-/* ─── Leer comentarios (Firebase primero, localStorage como respaldo) ─── */
-async function getComments(rid) {
-  try {
-    const snap = await firebase.database()
-      .ref(`comments/${rid}`)
-      .orderByChild('ts')
-      .once('value');
-    const comments = [];
-    snap.forEach(child => comments.push({ key: child.key, ...child.val() }));
-    localStorage.setItem(`comments_${rid}`, JSON.stringify(comments));
-    return comments;
-  } catch(e) {
-    try { return JSON.parse(localStorage.getItem(`comments_${rid}`) || '[]'); }
-    catch(e2) { return []; }
-  }
-}
-
-/* ─── Leer comentarios solo desde localStorage ─── */
+/* ─── Leer localStorage ─── */
 function getCommentsLocal(rid) {
   try { return JSON.parse(localStorage.getItem(`comments_${rid}`) || '[]'); }
   catch(e) { return []; }
@@ -85,25 +68,32 @@ async function renderCommentsSection(card, containerEl) {
   }
 
   // Mostrar localStorage inmediatamente
-  // renderCommentListFromData(rid, getCommentsLocal(rid), isAdmin, username);
+  const local = getCommentsLocal(rid);
+  renderCommentListFromData(rid, local, isAdmin, username);
 
-  // Luego sincronizar con Firebase
-  // Cargar SOLO desde Firebase, sin localStorage
+  // Sincronizar Firebase y fusionar
   try {
     const snap = await firebase.database()
       .ref(`comments/${rid}`)
       .orderByChild('ts')
       .once('value');
-    const comments = [];
-    snap.forEach(child => comments.push({ key: child.key, ...child.val() }));
-    console.log('Firebase comments:', comments.length);
-    renderCommentListFromData(rid, comments, isAdmin, username);
+    const firebaseComments = [];
+    snap.forEach(child => firebaseComments.push({ key: child.key, ...child.val() }));
+
+    if (firebaseComments.length > 0) {
+      const localComments = getCommentsLocal(rid);
+      const localTs = new Set(localComments.map(c => c.ts));
+      const nuevos = firebaseComments.filter(c => !localTs.has(c.ts));
+      const merged = [...localComments, ...nuevos].sort((a, b) => a.ts - b.ts);
+      localStorage.setItem(`comments_${rid}`, JSON.stringify(merged));
+      renderCommentListFromData(rid, merged, isAdmin, username);
+    }
   } catch(e) {
-    console.warn('Error:', e);
+    console.warn('Firebase sync error:', e);
   }
 }
 
-/* ─── Renderizar lista desde datos ─── */
+/* ─── Renderizar lista ─── */
 function renderCommentListFromData(rid, comments, isAdmin, username) {
   const list = document.getElementById(`comments-list-${rid}`);
   if (!list) return;
@@ -138,7 +128,7 @@ function sendComment(rid, username) {
     ts:     Date.now(),
   };
 
-  // Guardar en localStorage inmediatamente y mostrar
+  // Guardar en localStorage y mostrar inmediatamente
   const comments = getCommentsLocal(rid);
   comments.push(newComment);
   localStorage.setItem(`comments_${rid}`, JSON.stringify(comments));
@@ -188,7 +178,8 @@ async function deleteComment(rid, commentKey) {
     await firebase.database().ref(`comments/${rid}/${commentKey}`).remove();
   } catch(e) { console.warn('Firebase delete error:', e); }
 
-  renderCommentListFromData(rid, comments, true, session.username);
+  const isAdmin = true;
+  renderCommentListFromData(rid, comments, isAdmin, session.username);
 }
 
 /* ─── Construir elemento ─── */

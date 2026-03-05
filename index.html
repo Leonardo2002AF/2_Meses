@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="assets/css/login.css" />
   <link rel="stylesheet" href="assets/css/cascade.css" />
   <link rel="stylesheet" href="assets/css/comments.css" />
+  <link rel="stylesheet" href="assets/css/edit-memory.css" />
 </head>
 <body>
 
@@ -249,6 +250,7 @@
           <button class="btn btn-play" id="modal-play-btn">▶ Reproducir</button>
           <button class="btn btn-red  btn-fav" id="modal-fav-btn">♥ Me Encanta</button>
           <button class="btn btn-info" onclick="closeModal()">✕ Cerrar</button>
+          <button class="btn btn-edit" id="modal-edit-btn">✏️ Editar</button>
         </div>
       </div>
     </div>
@@ -439,6 +441,7 @@
 <script src="assets/js/anniversary.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/edit-memory.js"></script>
 
   <script>
     /* ── Modales con IDs fijos para openModal ── */
@@ -500,6 +503,36 @@
     #change-pass-modal.open { display: flex !important; }
     #favs-modal.open        { display: flex !important; }
   </style>
+<div id="edit-modal">
+  <div class="edit-box">
+    <div class="edit-header">
+      <h3>✏️ Editar Recuerdo</h3>
+      <button class="edit-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div id="edit-error" class="edit-error"></div>
+    <div id="edit-success" class="edit-success"></div>
+    <div class="edit-field">
+      <label class="edit-label">Título</label>
+      <input class="edit-input" id="edit-title" type="text" maxlength="60" placeholder="Título del recuerdo"/>
+    </div>
+    <div class="edit-field">
+      <label class="edit-label">Descripción</label>
+      <textarea class="edit-textarea" id="edit-desc" placeholder="Descripción..."></textarea>
+    </div>
+    <div class="edit-field">
+      <label class="edit-label">Fecha</label>
+      <input class="edit-input" id="edit-fecha" type="date"/>
+    </div>
+    <div class="edit-field">
+      <label class="edit-label">Categoría</label>
+      <select class="edit-select" id="edit-category"></select>
+    </div>
+    <div class="edit-actions">
+      <button id="edit-save-btn" onclick="saveEditChanges()">💾 Guardar</button>
+      <button class="edit-cancel-btn" onclick="closeEditModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
