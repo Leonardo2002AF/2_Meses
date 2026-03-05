@@ -110,7 +110,7 @@ async function loadTimelineCards() {
     });
   } catch(e) {}
 
-  _tlAllCards.sort((a, b) => b._ts - a._ts);
+  _tlAllCards.sort((a, b) => a._ts - b._ts);
 }
 
 /* ─── Parsear fecha ─── */
@@ -181,7 +181,7 @@ function renderTimeline() {
   const sortedKeys = Object.keys(groups).sort((a, b) => {
     if (a === 'sin-fecha') return 1;
     if (b === 'sin-fecha') return -1;
-    return b.localeCompare(a);
+    return a.localeCompare(b);
   });
 
   body.innerHTML = '';
@@ -278,7 +278,7 @@ function buildFilters() {
 
   const monthKeys = [...new Set(_tlAllCards.map(c => getMonthKey(c)))]
     .filter(k => k !== 'sin-fecha')
-    .sort((a, b) => b.localeCompare(a));
+    .sort((a, b) => a.localeCompare(b));
 
   container.innerHTML = '';
 
