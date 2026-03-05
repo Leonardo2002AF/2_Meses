@@ -13,14 +13,22 @@ exports.handler = async (event) => {
   try {
     const { publicId, title, desc, fecha, catId, resourceType } = JSON.parse(event.body);
 
-    await cloudinary.uploader.explicit(publicId, {
+    const result = await cloudinary.uploader.explicit(publicId, {
       type:          'upload',
       resource_type: resourceType || 'image',
-      context:       `title=${title}|sub=${desc}|desc=${desc}|fecha=${fecha}|category=${catId}`,
+      context: {
+        title:    title,
+        sub:      desc,
+        desc:     desc,
+        fecha:    fecha,
+        category: catId,
+      },
     });
 
-    return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+    console.log('Cloudinary result:', result.public_id);
+    return { statusCode: 200, body: JSON.stringify({ ok: true, id: result.public_id }) };
   } catch(e) {
+    console.error('Error:', e.message);
     return { statusCode: 500, body: JSON.stringify({ error: e.message }) };
   }
 };
