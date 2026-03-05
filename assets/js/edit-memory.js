@@ -69,11 +69,15 @@ async function saveEditChanges() {
   const fechaFormatted = newFecha ? formatFechaDisplay(newFecha) : (card.fecha || '');
 
   try {
-    // Obtener publicId desde la URL de imagen o video
+    // Obtener publicId correctamente — elimina versión y extensión
     const mediaUrl = card.image || card.video || '';
     const publicId = mediaUrl.includes('/upload/')
-      ? mediaUrl.split('/upload/').pop().replace(/\.[^.]+$/, '')
+      ? mediaUrl.split('/upload/').pop()
+          .replace(/^v\d+\//, '')     // elimina v1234567/
+          .replace(/\.[^.]+$/, '')    // elimina extensión .jpg .mp4 etc
       : '';
+
+    console.log('publicId enviado:', publicId);
 
     if (!publicId) throw new Error('No se pudo obtener el publicId');
 
@@ -90,8 +94,8 @@ async function saveEditChanges() {
     });
 
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || 'Error en servidor');
+      const errData = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      throw new Error(errData.error || 'Error en servidor');
     }
 
     // Actualizar card en memoria
