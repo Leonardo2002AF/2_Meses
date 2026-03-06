@@ -623,6 +623,8 @@ function initApp() {
   updateCounter();
   initNavbar();
   initOutsideClose();
+  actualizarBotonRuleta();
+  if (typeof actualizarBotonRuleta === 'function') actualizarBotonRuleta();
 }
 
 if (document.readyState === 'loading') {

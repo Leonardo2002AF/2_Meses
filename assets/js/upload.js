@@ -53,7 +53,6 @@ function resetUploadModal() {
     `;
   }
 
-  // Input FIJO fuera del dropzone para que no se destruya en iOS
   let input = document.getElementById('um-file-input-fixed');
   if (!input) {
     input = document.createElement('input');
@@ -72,7 +71,6 @@ function resetUploadModal() {
   const descInput = document.getElementById('um-desc');
   if (descInput) descInput.value = '';
 
-  // Limpiar campo fecha
   const fechaInput = document.getElementById('um-fecha');
   if (fechaInput) fechaInput.value = '';
 
@@ -166,7 +164,6 @@ async function startUpload() {
   if (!uploadState.file) { showUploadError('Primero elige un archivo.');           return; }
   if (!title)             { showUploadError('Escribe un título para el recuerdo.'); return; }
 
-  // Formatear fecha para mostrar: "07 Enero 2025"
   let fechaFormateada = '';
   if (fechaRaw) {
     const [y, m, d] = fechaRaw.split('-');
@@ -213,12 +210,28 @@ async function startUpload() {
     saveToLocalStorage(category, card);
     addCardToCarousel(category, card);
     showUploadSuccess(title);
+
     const session = (typeof getSession === 'function') ? getSession() : null;
+
+    // Notificación
     if (session && !session.guest && typeof saveNotification === 'function') {
       saveNotification(card, session.username);
     }
-    setUploadStep(4);
 
+    // ★ SISTEMA DE PUNTOS CON IA ★
+    if (session && !session.guest && session.username &&
+        typeof procesarNuevoRecuerdo === 'function') {
+      try {
+        await procesarNuevoRecuerdo(title, desc, session.username);
+        if (typeof actualizarBotonRuleta === 'function') {
+          await actualizarBotonRuleta();
+        }
+      } catch(e) {
+        console.warn('Error sistema de puntos:', e);
+      }
+    }
+
+    setUploadStep(4);
     setTimeout(() => loadSavedCards(), 3000);
 
   } catch (err) {
@@ -317,7 +330,6 @@ async function loadSavedCards() {
     if (all.length > 0) {
       all.forEach(r => {
         const ctx = r.context?.custom || {};
-
         const tagCat   = (r.tags || []).find(t => t.startsWith('cat_'));
         const category = ctx.category || (tagCat ? tagCat.replace('cat_', '') : 'c1');
         const type     = ctx.type || r.resourceType || 'image';
