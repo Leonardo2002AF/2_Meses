@@ -1,32 +1,13 @@
 /* ══════════════════════════════════════════
    NUESTROS RECUERDOS — Aniversario Mensual
    Se activa el día 07 de cada mes
+   Aparece cada vez que se entra ese día
    ══════════════════════════════════════════ */
-
-const ANNIV_KEY = 'nuestrosRecuerdos_anniversaryShown';
 
 /* ─── Verificar si hoy es día de aniversario ─── */
 function isTodayAnniversary() {
   const today = new Date();
   return today.getDate() === 7;
-}
-
-/* ─── Verificar si ya se mostró hoy ─── */
-function wasShownToday() {
-  try {
-    const val = localStorage.getItem(ANNIV_KEY);
-    if (!val) return false;
-    const { date } = JSON.parse(val);
-    const today = new Date().toISOString().split('T')[0];
-    return date === today;
-  } catch(e) { return false; }
-}
-
-function markShownToday() {
-  try {
-    const today = new Date().toISOString().split('T')[0];
-    localStorage.setItem(ANNIV_KEY, JSON.stringify({ date: today }));
-  } catch(e) {}
 }
 
 /* ─── Calcular cuántos meses llevamos ─── */
@@ -52,7 +33,7 @@ const ANNIV_MESSAGES = [
 
 /* ─── Crear partículas de confeti y corazones ─── */
 function createParticles(container) {
-  const items = ['💖','💗','💕','♥','🌹','✨','💫','🥰','💝','❤️','🌸','⭐'];
+  const items  = ['💖','💗','💕','♥','🌹','✨','💫','🥰','💝','❤️','🌸','⭐'];
   const colors = ['#c0396e','#e50914','#ff6b8a','#ff4466','#ffaacc','#ffffff'];
 
   for (let i = 0; i < 60; i++) {
@@ -61,20 +42,19 @@ function createParticles(container) {
 
     const isEmoji = Math.random() > 0.4;
     if (isEmoji) {
-      p.textContent = items[Math.floor(Math.random() * items.length)];
+      p.textContent    = items[Math.floor(Math.random() * items.length)];
       p.style.fontSize = (0.8 + Math.random() * 1.5) + 'rem';
     } else {
-      // Confeti rectangular
-      p.style.width    = (6 + Math.random() * 8) + 'px';
-      p.style.height   = (10 + Math.random() * 12) + 'px';
-      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.width        = (6 + Math.random() * 8) + 'px';
+      p.style.height       = (10 + Math.random() * 12) + 'px';
+      p.style.background   = colors[Math.floor(Math.random() * colors.length)];
       p.style.borderRadius = '2px';
     }
 
-    p.style.left             = (Math.random() * 100) + '%';
-    p.style.top              = '-30px';
+    p.style.left              = (Math.random() * 100) + '%';
+    p.style.top               = '-30px';
     p.style.animationDuration = (3 + Math.random() * 5) + 's';
-    p.style.animationDelay   = (Math.random() * 4) + 's';
+    p.style.animationDelay    = (Math.random() * 4) + 's';
 
     container.appendChild(p);
   }
@@ -89,7 +69,6 @@ function showAnniversaryScreen(onClose) {
     ? `¡Llevamos <span>${months} ${months === 1 ? 'mes' : 'meses'}</span> juntos!`
     : '¡Un mes más de amor! 💞';
 
-  // Crear overlay
   const overlay = document.createElement('div');
   overlay.id = 'anniversary-overlay';
 
@@ -116,21 +95,16 @@ function showAnniversaryScreen(onClose) {
   document.body.appendChild(overlay);
   createParticles(overlay);
 
-  // Guardar callback para cuando se cierre
   window._anniversaryOnClose = onClose;
 
-  // Animar entrada
   requestAnimationFrame(() => {
     requestAnimationFrame(() => overlay.classList.add('visible'));
   });
 
-  // Mostrar botón de cerrar tras 5 segundos
   setTimeout(() => {
     const btn = document.getElementById('anniv-close-btn');
     if (btn) btn.classList.add('visible');
   }, 5000);
-
-  markShownToday();
 }
 
 /* ─── Cerrar pantalla de aniversario ─── */
@@ -141,7 +115,6 @@ function closeAnniversaryScreen() {
   overlay.classList.add('hiding');
   setTimeout(() => {
     overlay.remove();
-    // Ejecutar callback (normalmente continuar con el login/cascada)
     if (typeof window._anniversaryOnClose === 'function') {
       window._anniversaryOnClose();
       window._anniversaryOnClose = null;
@@ -155,11 +128,5 @@ function initAnniversary(onClose) {
     if (typeof onClose === 'function') onClose();
     return;
   }
-  if (wasShownToday()) {
-    if (typeof onClose === 'function') onClose();
-    return;
-  }
-
-  // Pequeña pausa para que el login ya haya desaparecido
   setTimeout(() => showAnniversaryScreen(onClose), 300);
 }
