@@ -37,10 +37,11 @@ const RULETA_PREMIOS = [
 
 /* ─── Obtener puntos de Firebase ─── */
 async function getUserPoints(username) {
-  try {
-    const snap = await firebase.database().ref(`puntos/${username}`).once('value');
-    return snap.val() || 0;
-  } catch(e) { return 0; }
+  return new Promise((resolve) => {
+    firebase.database().ref(`puntos/${username}`).once('value')
+      .then(snap => resolve(snap.val() || 0))
+      .catch(() => resolve(0));
+  });
 }
 
 /* ─── Guardar puntos en Firebase ─── */
@@ -141,11 +142,10 @@ async function abrirRuleta() {
   const snap   = await firebase.database().ref(`puntos/${username}`).once('value');
   const puntos = snap.val() || 0;
 
-  if (puntos < POINTS_THRESHOLD) {
-    alert(`Necesitas ${POINTS_THRESHOLD} puntos para girar la ruleta.\nTienes ${puntos} puntos.`);
-    return;
-  }
-  // ... resto igual
+  // Leer historial de premios ganados
+  const histSnap   = await firebase.database().ref(`historial_ruleta/${username}`).once('value');
+  const historialRaw = histSnap.val() || {};
+  const historial  = Object.values(historialRaw).sort((a, b) => b.ts - a.ts);
 
   // Crear modal ruleta
   const overlay = document.createElement('div');
@@ -153,11 +153,8 @@ async function abrirRuleta() {
 
   const numSegmentos = RULETA_PREMIOS.length;
   const angulo       = 360 / numSegmentos;
-
-  // Colores alternos
   const colores = ['#c0392b','#922b21','#e74c3c','#7b241c','#cb4335','#a93226'];
 
-  // Generar segmentos SVG
   function polarToCartesian(cx, cy, r, deg) {
     const rad = (deg - 90) * Math.PI / 180;
     return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
@@ -178,7 +175,6 @@ async function abrirRuleta() {
     const endDeg   = startDeg + angulo;
     const midDeg   = startDeg + angulo / 2;
     const color    = colores[i % colores.length];
-    const mid      = polarToCartesian(250, 250, 170, midDeg);
 
     svgSegments += `<path d="${segmentoPath(250,250,240,startDeg,endDeg)}" fill="${color}" stroke="#1a0000" stroke-width="1.5"/>`;
     svgTexts    += `
@@ -188,12 +184,43 @@ async function abrirRuleta() {
       </g>`;
   });
 
+  // Historial HTML
+  const historialHTML = historial.length === 0
+    ? '<div class="historial-empty">Aún no has girado la ruleta 🎡</div>'
+    : historial.map(h => `
+        <div class="historial-item">
+          <span class="historial-emoji">${h.emoji}</span>
+          <div class="historial-info">
+            <div class="historial-texto">${h.texto}</div>
+            <div class="historial-fecha">${new Date(h.ts).toLocaleDateString('es-ES', {day:'numeric',month:'short',year:'numeric'})}</div>
+          </div>
+          <span class="historial-estado ${h.cumplido ? 'cumplido' : 'pendiente'}">
+            ${h.cumplido ? '✅ Cumplido' : '⏳ Pendiente'}
+          </span>
+        </div>
+      `).join('');
+
+  // Botón girar — bloqueado si no hay puntos suficientes
+  const puedeGirar = puntos >= POINTS_THRESHOLD;
+  const btnGirarHTML = puedeGirar
+    ? `<button id="ruleta-girar-btn" onclick="girarRuleta(${puntos}, '${username}')">
+         🎡 ¡Girar! (−${POINTS_THRESHOLD} pts)
+       </button>`
+    : `<button id="ruleta-girar-btn" disabled>
+         🔒 Faltan ${POINTS_THRESHOLD - puntos} pts para girar
+       </button>`;
+
   overlay.innerHTML = `
     <div class="ruleta-modal">
       <div class="ruleta-header">
         <h2>🎡 Ruleta de Premios</h2>
-        <p>Tus puntos: <strong id="ruleta-puntos-display">${puntos}</strong> — Al girar se descuentan ${POINTS_THRESHOLD}</p>
+        <p>Tus puntos: <strong id="ruleta-puntos-display">${puntos}</strong>
+          ${puedeGirar
+            ? `— <span style="color:#e74c3c">¡Puedes girar!</span>`
+            : `— Necesitas <strong>${POINTS_THRESHOLD}</strong> para girar`}
+        </p>
       </div>
+
       <div class="ruleta-container">
         <div class="ruleta-pointer">▼</div>
         <div class="ruleta-wheel-wrap" id="ruleta-wheel-wrap">
@@ -205,14 +232,22 @@ async function abrirRuleta() {
           </svg>
         </div>
       </div>
+
       <div id="ruleta-resultado" class="ruleta-resultado"></div>
+
       <div class="ruleta-btns">
-        <button id="ruleta-girar-btn" onclick="girarRuleta(${puntos}, '${username}')">
-          🎡 ¡Girar! (−${POINTS_THRESHOLD} pts)
-        </button>
+        ${btnGirarHTML}
         <button onclick="document.getElementById('ruleta-overlay').remove()" class="ruleta-cerrar-btn">
           Cerrar
         </button>
+      </div>
+
+      <!-- Historial de premios -->
+      <div class="historial-section">
+        <div class="historial-title">🏆 Premios ganados</div>
+        <div class="historial-list" id="historial-list">
+          ${historialHTML}
+        </div>
       </div>
     </div>
   `;
@@ -224,18 +259,35 @@ let _ruletaGirando = false;
 
 async function girarRuleta(puntosActuales, username) {
   if (_ruletaGirando) return;
+
+  // Verificar puntos frescos antes de girar
+  const snapVerify = await firebase.database().ref(`puntos/${username}`).once('value');
+  const puntosReales = snapVerify.val() || 0;
+  if (puntosReales < POINTS_THRESHOLD) {
+    alert(`No tienes suficientes puntos. Tienes ${puntosReales}.`);
+    return;
+  }
+
   _ruletaGirando = true;
 
   const btn = document.getElementById('ruleta-girar-btn');
   if (btn) btn.disabled = true;
 
   // Descontar puntos
-  const puntosNuevos = puntosActuales - POINTS_THRESHOLD;
+  const puntosNuevos = puntosReales - POINTS_THRESHOLD;
   await setUserPoints(username, puntosNuevos);
 
   // Elegir premio aleatorio
   const ganadorIdx = Math.floor(Math.random() * RULETA_PREMIOS.length);
   const premio     = RULETA_PREMIOS[ganadorIdx];
+
+  // Guardar en historial Firebase
+  await firebase.database().ref(`historial_ruleta/${username}`).push({
+    emoji:    premio.emoji,
+    texto:    premio.texto,
+    ts:       Date.now(),
+    cumplido: false,
+  });
 
   // Calcular rotación
   const angulo        = 360 / RULETA_PREMIOS.length;
@@ -250,7 +302,7 @@ async function girarRuleta(puntosActuales, username) {
     svg.style.transform = `rotate(${rotacionTotal}deg)`;
   }
 
-  setTimeout(() => {
+  setTimeout(async () => {
     _ruletaGirando = false;
 
     const resultado = document.getElementById('ruleta-resultado');
@@ -269,18 +321,42 @@ async function girarRuleta(puntosActuales, username) {
     const display = document.getElementById('ruleta-puntos-display');
     if (display) display.textContent = puntosNuevos;
 
-    // Deshabilitar botón si no alcanza
+    // Recargar historial
+    const histSnap = await firebase.database().ref(`historial_ruleta/${username}`).once('value');
+    const historialRaw = histSnap.val() || {};
+    const historial = Object.values(historialRaw).sort((a, b) => b.ts - a.ts);
+    const listEl = document.getElementById('historial-list');
+    if (listEl) {
+      listEl.innerHTML = historial.map(h => `
+        <div class="historial-item">
+          <span class="historial-emoji">${h.emoji}</span>
+          <div class="historial-info">
+            <div class="historial-texto">${h.texto}</div>
+            <div class="historial-fecha">${new Date(h.ts).toLocaleDateString('es-ES', {day:'numeric',month:'short',year:'numeric'})}</div>
+          </div>
+          <span class="historial-estado ${h.cumplido ? 'cumplido' : 'pendiente'}">
+            ${h.cumplido ? '✅ Cumplido' : '⏳ Pendiente'}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    // Actualizar botón girar
     if (btn) {
       if (puntosNuevos >= POINTS_THRESHOLD) {
         btn.disabled = false;
-        btn.onclick  = () => girarRuleta(puntosNuevos, username);
+        btn.textContent = `🎡 ¡Girar! (−${POINTS_THRESHOLD} pts)`;
+        btn.onclick = () => girarRuleta(puntosNuevos, username);
       } else {
-        btn.textContent = `Necesitas ${POINTS_THRESHOLD - puntosNuevos} pts más`;
+        btn.textContent = `🔒 Faltan ${POINTS_THRESHOLD - puntosNuevos} pts para girar`;
       }
     }
+
+    // Actualizar botón navbar
+    if (typeof actualizarBotonRuleta === 'function') actualizarBotonRuleta();
+
   }, 5200);
 }
-
 /* ─── Mostrar botón de ruleta en navbar o donde convenga ─── */
 async function actualizarBotonRuleta() {
   const session  = (typeof getSession === 'function') ? getSession() : null;
