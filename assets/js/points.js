@@ -137,11 +137,15 @@ async function abrirRuleta() {
   const username = session?.username;
   if (!username) return;
 
-  const puntos = await getUserPoints(username);
+  // Leer puntos frescos directo de Firebase
+  const snap   = await firebase.database().ref(`puntos/${username}`).once('value');
+  const puntos = snap.val() || 0;
+
   if (puntos < POINTS_THRESHOLD) {
     alert(`Necesitas ${POINTS_THRESHOLD} puntos para girar la ruleta.\nTienes ${puntos} puntos.`);
     return;
   }
+  // ... resto igual
 
   // Crear modal ruleta
   const overlay = document.createElement('div');
@@ -288,15 +292,20 @@ async function actualizarBotonRuleta() {
   let btn = document.getElementById('ruleta-nav-btn');
   if (!btn) {
     btn = document.createElement('button');
-    btn.id        = 'ruleta-nav-btn';
-    btn.onclick   = abrirRuleta;
-    // Intentar agregar al navbar
-    const nav = document.querySelector('.nav-right') || document.querySelector('nav') || document.body;
-    nav.appendChild(btn);
+    btn.id      = 'ruleta-nav-btn';
+    btn.onclick = abrirRuleta;
+
+    // Insertar ANTES del primer icono del navbar
+    const navRight = document.querySelector('.nav-right');
+    if (navRight) {
+      navRight.insertBefore(btn, navRight.firstChild);
+    }
   }
 
   btn.innerHTML = puntos >= POINTS_THRESHOLD
-    ? `🎡 Ruleta <span class="ruleta-badge">${puntos}pts ✨</span>`
-    : `🎡 <span class="ruleta-badge">${puntos}/${POINTS_THRESHOLD}pts</span>`;
-  btn.className = puntos >= POINTS_THRESHOLD ? 'ruleta-btn ruleta-btn-ready' : 'ruleta-btn';
+    ? `🎡 <span class="ruleta-badge">${puntos}pts ✨</span>`
+    : `🎡 <span class="ruleta-badge">${puntos}/${POINTS_THRESHOLD}</span>`;
+  btn.className = puntos >= POINTS_THRESHOLD
+    ? 'ruleta-btn ruleta-btn-ready'
+    : 'ruleta-btn';
 }
